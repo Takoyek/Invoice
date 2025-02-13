@@ -2,11 +2,7 @@ import re
 
 def remove_titles(line):
     # الگوی عناوین که باید حذف شود
-    title_pattern = r"^Saeid Barati, 
-
-\[\d{2}-\w{3}-\d{2} \d{2}:\d{2}\]
-
-$"
+    title_pattern = r"^Saeid Barati, \[\d{2}-\w{3}-\d{2} \d{2}:\d{2}\]$"
     if re.match(title_pattern, line.strip()):
         return ""
     return line
@@ -24,10 +20,10 @@ def process_text(line):
     return line
 
 def replace_numbers_with_brackets(line):
-    # جایگذاری اعداد 45، 65 و 333 داخل []
-    for number in ["45", "65", "45"]:  # اعداد مورد نظر
+    # جایگذاری اعداد 45 و 65 داخل []
+    for number in ["45", "65"]:
         line = line.replace(f"✅{number}", f"✅[{number}]")
-        line = line.replace(f"🟢{number}", f"🟢[{number}]")
+        line = line.replace(f"🟢{number}", f"[ {number} ]🟢")
     return line
 
 def main():
