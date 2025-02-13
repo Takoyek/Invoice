@@ -40,10 +40,10 @@ def process_text(line, counts):
         modified = True
     
     if modified:
-        counts['actual_total'] += 1  # شمارش خطوطی که شامل "✅" یا "🟢" هستند.
+        counts['actual_total'] += 1
     
     if needs_review:
-        counts['needs_review'] += 1  # فقط در صورت داشتن [000000] شمارش شود
+        counts['needs_review'] += 1
     
     return line
 
@@ -64,23 +64,26 @@ def main():
         line, date = remove_titles(line)
         if date:
             dates.append(date)
-        if line.strip():
-            line = process_text(line, counts)
-            processed_lines.append(line)
-            
-            if "[000000]" in line:
-                review_lines.append(line)  # ذخیره نسخه پردازش شده برای بررسی
-            
-            matches = re.findall(r"\[(\d+)\]", line)
-            for match in matches:
-                if match != "000000":
-                    counts['sum'] += int(match)
+        
+        if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
+            continue  # فقط خطوط حاوی این عبارات پردازش می‌شوند
+        
+        line = process_text(line, counts)
+        processed_lines.append(line)
+        
+        if "[000000]" in line:
+            review_lines.append(line)
+        
+        matches = re.findall(r"\[(\d+)\]", line)
+        for match in matches:
+            if match != "000000":
+                counts['sum'] += int(match)
     
     start_date = min(dates) if dates else "نامشخص"
     end_date = max(dates) if dates else "نامشخص"
     
     processed_lines.append(f"\nبازه زمانی: {start_date} تا {end_date}\n")
-    processed_lines.append(f"مجموع رکوردها: {counts['actual_total']} عدد\n")  # اصلاح این خط
+    processed_lines.append(f"مجموع رکوردها: {counts['actual_total']} عدد\n")
     processed_lines.append(f"تعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
     processed_lines.append(f"جمع کل: {counts['sum']} هزار تومان\n")
     
