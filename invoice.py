@@ -1,48 +1,95 @@
 import re
 
 def remove_titles(line):
-    # الگوی عناوین که باید حذف شود
-    title_pattern = r"^Saeid Barati, \[\d{2}-\w{3}-\d{2} \d{2}:\d{2}\]$"
-    if re.match(title_pattern, line.strip()):
-        return ""
-    return line
+    title_pattern = r"^Saeid Barati, \[(\d{2}-\w{3}-\d{2}) \d{2}:\d{2}\]$"
+    match = re.match(title_pattern, line.strip())
+    if match:
+        return "", match.group(1)
+    return line, None
 
-def process_text(line):
-    # بررسی کلمه "سی" و افزودن عدد 45
-    if "سی" in line:
-        line = line.replace("✅", "✅45")
-    # بررسی کلمه "پنجاه" و افزودن عدد 65
-    if "پنجاه" in line:
-        line = line.replace("✅", "✅65")
-    # بررسی کلمه "Samadi" و افزودن عدد 45
-    if "Samadi" in line:
-        line = line.replace("🟢", "🟢 45")
-    return line
-
-def replace_numbers_with_brackets(line):
-    # جایگذاری اعداد 45 و 65 داخل []
-    for number in ["45", "65"]:
-        line = line.replace(f"✅{number}", f"✅[{number}]")
-        line = line.replace(f"🟢{number}", f"[ {number} ]🟢")
+def process_text(line, counts):
+    replacements = {
+        "ده گیگ": "✅  [25]",
+        "بیست گیگ": "✅  [35]",
+        "سی گیگ": "✅  [45]",
+        "چهل گیگ": "✅  [55]",
+        "پنجاه گیگ": "✅  [65]",
+        "شصد گیگ": "✅  [000000]",
+        "هفتاد گیگ": "✅  [000000]",
+        "هشتاد گیگ": "✅  [000000]",
+        "نود گیگ": "✅  [000000]",
+        "صد گیگ": "✅  [000000]",
+        "صدو بیست گیگ": "✅  [000000]",
+        "صدو پنجاه گیگ": "✅  [000000]"
+    }
+    
+    modified = False
+    needs_review = False
+    for key, value in replacements.items():
+        if key in line:
+            line = re.sub(r"✅", value, line)
+            counts['total'] += 1
+            modified = True
+            if "000000" in value:
+                needs_review = True
+    
+    if "🟢" in line:
+        line = line.replace("🟢", "🟢  [000000]")
+        counts['total'] += 1
+        needs_review = True
+        modified = True
+    
+    if modified:
+        counts['actual_total'] += 1  # شمارش خطوطی که شامل "✅" یا "🟢" هستند.
+    
+    if needs_review:
+        counts['needs_review'] += 1  # فقط در صورت داشتن [000000] شمارش شود
+    
     return line
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
     output_path = "D:\\AVIDA\\CODE\\Invoice\\Output.txt"
+    editme_path = "D:\\AVIDA\\CODE\\Invoice\\EditMe.txt"
 
+    counts = {"total": 0, "needs_review": 0, "sum": 0, "actual_total": 0}
+    processed_lines = []
+    review_lines = []
+    dates = []
+    
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
-
-    processed_lines = []
+    
     for line in lines:
-        line = remove_titles(line)
-        if line.strip():  # بررسی اینکه خط خالی نباشد
-            line = process_text(line)
-            line = replace_numbers_with_brackets(line)
+        line, date = remove_titles(line)
+        if date:
+            dates.append(date)
+        if line.strip():
+            line = process_text(line, counts)
             processed_lines.append(line)
-
+            
+            if "[000000]" in line:
+                review_lines.append(line)  # ذخیره نسخه پردازش شده برای بررسی
+            
+            matches = re.findall(r"\[(\d+)\]", line)
+            for match in matches:
+                if match != "000000":
+                    counts['sum'] += int(match)
+    
+    start_date = min(dates) if dates else "نامشخص"
+    end_date = max(dates) if dates else "نامشخص"
+    
+    processed_lines.append(f"\nبازه زمانی: {start_date} تا {end_date}\n")
+    processed_lines.append(f"مجموع رکوردها: {counts['actual_total']} عدد\n")  # اصلاح این خط
+    processed_lines.append(f"تعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
+    processed_lines.append(f"جمع کل: {counts['sum']} هزار تومان\n")
+    
     with open(output_path, "w", encoding="utf-8") as file:
         file.writelines(processed_lines)
-
+    
+    with open(editme_path, "w", encoding="utf-8") as file:
+        file.writelines(review_lines)
+        file.write(f"\nتعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
+    
 if __name__ == "__main__":
     main()
