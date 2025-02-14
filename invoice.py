@@ -1,12 +1,4 @@
 import re
-from datetime import datetime
-
-def remove_titles(line):
-    title_pattern = r"^Saeid Barati, \[(\d{2}-\w{3}-\d{2}) \d{2}:\d{2}\]$"
-    match = re.match(title_pattern, line.strip())
-    if match:
-        return "", match.group(1)
-    return line, None
 
 def process_text(line, counts):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
@@ -98,17 +90,10 @@ def process_text(line, counts):
     if needs_review:
         counts['needs_review'] += 1
 
-    # شمارش تعداد "✅" و "🟢"
     counts['total_checkmarks'] += line.count("✅")
     counts['total_green'] += line.count("🟢")
     
     return line
-
-def calculate_date_diff(start_date, end_date):
-    date_format = "%d-%b-%y"
-    start = datetime.strptime(start_date, date_format)
-    end = datetime.strptime(end_date, date_format)
-    return (end - start).days
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -120,23 +105,16 @@ def main():
         "needs_review": 0,
         "sum": 0,
         "actual_total": 0,
-        "total_checkmarks": 0,  # تعداد "✅"
-        "total_green": 0  # تعداد "🟢"
+        "total_checkmarks": 0,
+        "total_green": 0
     }
     processed_lines = []
     review_lines = []
-    dates = []
     
-    # استخراج تاریخ‌ها از فایل ورودی
-    date_pattern = r"\[(\d{2}-\w{3}-\d{2})"
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     
     for line in lines:
-        line, date = remove_titles(line)
-        if date:
-            dates.append(date)
-        
         processed_line = process_text(line, counts)
         if processed_line:
             processed_lines.append(processed_line)
@@ -151,19 +129,9 @@ def main():
     
     counts['actual_total'] = counts['total']
     
-    start_date = min(dates) if dates else "نامشخص"
-    end_date = max(dates) if dates else "نامشخص"
-    
-    # محاسبه تفاوت روزها
-    if start_date != "نامشخص" and end_date != "نامشخص":
-        date_diff = calculate_date_diff(start_date, end_date)
-    else:
-        date_diff = 0
-    
-    processed_lines.append(f"\nدوره زمانی: {start_date} تا {end_date} ({date_diff} روز)\n")
-    processed_lines.append(f"تعداد کل ✅: {counts['total_checkmarks']}\n")
+    processed_lines.append(f"\nتعداد کل ✅: {counts['total_checkmarks']}\n")
     processed_lines.append(f"تعداد کل 🟢: {counts['total_green']}\n")
-    processed_lines.append(f"مجموع رکوردها: {counts['total_checkmarks'] + counts['total_green']}\n")  # مجموع "✅" و "🟢"
+    processed_lines.append(f"مجموع رکوردها: {counts['total_checkmarks'] + counts['total_green']}\n")
     processed_lines.append(f"تعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
     
     with open(output_path, "w", encoding="utf-8") as file:
@@ -173,7 +141,6 @@ def main():
         file.writelines(review_lines)
         file.write(f"\nتعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
     
-    # انتقال خط "جمع کل:" به آخرین خط
     with open(output_path, "a", encoding="utf-8") as file:
         file.write(f"جمع کل: {counts['sum']} هزار تومان\n")
     
