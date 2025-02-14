@@ -4,25 +4,25 @@ def process_text(line, counts):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
         return None
 
-    # شرط ده گیگ (اولویت اول)
+    # اولویت ۱: ده گیگ
     if "ده گیگ" in line:
         line = re.sub(r"✅", "✅  [25]", line)
         counts['total'] += 1
         return line
 
-    # شرط بیست گیگ
-    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدوبیست گیگ"]):
+    # اولویت ۲: بیست گیگ
+    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
         line = re.sub(r"✅", "✅  [35]", line)
         counts['total'] += 1
         return line
 
-    # شرط سی گیگ
+    # اولویت ۳: سی گیگ
     if "سی گیگ" in line:
         line = re.sub(r"✅", "✅  [45]", line)
         counts['total'] += 1
         return line
 
-    # شرط جدید چهل گیگ <-- اضافه شد
+    # اولویت ۴: چهل گیگ
     if "چهل گیگ" in line and not any(phrase in line for phrase in ["صد و چهل گیگ", "صدو چهل گیگ", "صدوچهل گیگ"]):
         if any(day in line for day in ["شصد روز", "شصت روز"]):
             line = re.sub(r"✅", "✅  [70]", line)
@@ -31,69 +31,77 @@ def process_text(line, counts):
         counts['total'] += 1
         return line
 
-    # بقیه شرایط اصلی
-    if "شصد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [78]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [90]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [105]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "هفتاد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [91]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "هشتاد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [104]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [110]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "نود گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [117]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [125]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [135]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line:
-            line = line.replace("✅", "✅  [130]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [150]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد و بیست گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line:
-            line = line.replace("✅", "✅  [156]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [165]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد و پنجاه گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line or "نود روز" in line:
-            line = line.replace("✅", "✅  [195]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
+    # اولویت ۵: پنجاه گیگ
+    if "پنجاه گیگ" in line and not any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
+        line = re.sub(r"✅", "✅  [65]", line)
+        counts['total'] += 1
+        return line
 
-    # دیکشنری replacements بدون کلیدهای ده گیگ، بیست گیگ و سی گیگ <-- تغییر
-    replacements = {
-        "پنجاه گیگ": "✅  [65]",
-        "صدو بیست گیگ": "✅  [000000]",
-        "صدو پنجاه گیگ": "✅  [000000]"
-    }
+    # اولویت ۶: شصت گیگ
+    if any(gig in line for gig in ["شصت گیگ", "شصد گیگ"]) and \
+       not any(phrase in line for phrase in ["صد و شصت گیگ", "صدو شصت گیگ", "صدوشصت گیگ"]):
+        if any(day in line for day in ["نود روز"]):
+            line = re.sub(r"✅", "✅  [105]", line)
+        elif any(day in line for day in ["شصت روز", "شصد روز"]):
+            line = re.sub(r"✅", "✅  [90]", line)
+        else:
+            line = re.sub(r"✅", "✅  [78]", line)
+        counts['total'] += 1
+        return line
+
+    # اولویت ۷: هفتاد گیگ
+    if "هفتاد گیگ" in line:
+        line = re.sub(r"✅", "✅  [91]", line)
+        counts['total'] += 1
+        return line
+
+    # اولویت ۸: هشتاد گیگ
+    if "هشتاد گیگ" in line and not any(phrase in line for phrase in ["صد و هشتاد گیگ", "صدو هشتاد گیگ", "صدوهشتاد گیگ"]):
+        if any(day in line for day in ["شصت روز", "شصد روز"]):
+            line = re.sub(r"✅", "✅  [110]", line)
+        else:
+            line = re.sub(r"✅", "✅  [104]", line)
+        counts['total'] += 1
+        return line
+
+    # اولویت ۹: نود گیگ
+    if "نود گیگ" in line:
+        if "نود روز" in line:
+            line = re.sub(r"✅", "✅  [135]", line)
+        else:
+            line = re.sub(r"✅", "✅  [117]", line)
+        counts['total'] += 1
+        return line
+
+    # اولویت 10: صد گیگ
+    if "صد گیگ" in line:
+        if "نود روز" in line:
+            line = re.sub(r"✅", "✅  [150]", line)
+        else:
+            line = re.sub(r"✅", "✅  [130]", line)
+        counts['total'] += 1
+        return line
+    
+    # اولویت 11: صد و بیست گیگ
+    if any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
+        if any(day in line for day in ["صد و بیست روز", "صدو بیست روز", "صدوبیست روز"]):
+            line = re.sub(r"✅", "✅  [180]", line)
+        elif "نود روز" in line:
+            line = re.sub(r"✅", "✅  [165]", line)
+        else:
+            line = re.sub(r"✅", "✅  [156]", line)
+        counts['total'] += 1
+        return line
+
+    # اولویت 12: صد و پنجاه گیگ
+    if any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
+        line = re.sub(r"✅", "✅  [195]", line)
+        counts['total'] += 1
+        return line
+
+
+    # دیکشنری replacements
+    replacements = {}
     
     modified = False
     needs_review = False
