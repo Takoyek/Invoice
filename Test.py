@@ -1,8 +1,22 @@
 import re
 
 def process_text(line, counts):
+    # شمارش ✅ در تمام خطوط (حتی غیرقابل پردازش)
+    counts['total_checkmarks'] += line.count("✅")
+    
+    # بررسی آیا خط قابل پردازش است
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
         return None
+    
+    # شمارش 🟢 فقط در خطوط قابل پردازش <-- تغییر کلیدی
+    counts['total_green'] += line.count("🟢")
+    
+    # بقیه منطق پردازش
+    if "ده گیگ" in line:
+        line = re.sub(r"✅", "✅  [25]", line)
+        counts['total'] += 1
+        return line
+
 
     # اولویت ۱: ده گیگ
     if "ده گیگ" in line:
@@ -128,11 +142,6 @@ def process_text(line, counts):
     
     return line
 
-# بقیه کد بدون تغییر (تابع main و ...)
-
-# بقیه کد بدون تغییر می‌ماند (تابع main و ...)
-
-# بخش replacements حذف شد تا تداخلی ایجاد نشود
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
