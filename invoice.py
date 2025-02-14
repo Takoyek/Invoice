@@ -21,13 +21,6 @@ def process_text(line, counts):
             line = line.replace("✅", "✅  [105]")
         else:
             line = line.replace("✅", "✅  [000000]")
-    elif "صد گیگ" in line:  # این شرط فقط در صورتی اعمال می‌شود که "شصد گیگ" نباشد
-        if "سی روز" in line or "شصد روز" in line:
-            line = line.replace("✅", "✅  [130]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [150]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
     
     if "هفتاد گیگ" in line:
         if "سی روز" in line:
@@ -50,6 +43,14 @@ def process_text(line, counts):
             line = line.replace("✅", "✅  [125]")
         elif "نود روز" in line:
             line = line.replace("✅", "✅  [135]")
+        else:
+            line = line.replace("✅", "✅  [000000]")
+    
+    if "صد گیگ" in line:
+        if "سی روز" in line or "شصد روز" in line:
+            line = line.replace("✅", "✅  [130]")
+        elif "نود روز" in line:
+            line = line.replace("✅", "✅  [150]")
         else:
             line = line.replace("✅", "✅  [000000]")
     
@@ -76,7 +77,6 @@ def process_text(line, counts):
         "صدو بیست گیگ": "✅  [000000]",
         "صدو پنجاه گیگ": "✅  [000000]"
     }
-
     
     modified = False
     needs_review = False
