@@ -69,3 +69,80 @@ def process_text(line, counts):
         "صدو بیست گیگ": "✅  [000000]",
         "صدو پنجاه گیگ": "✅  [000000]"
     }
+    
+    modified = False
+    needs_review = False
+    for key, value in replacements.items():
+        if key in line:
+            line = re.sub(r"✅", value, line)
+            modified = True
+            if "000000" in value:
+                needs_review = True
+    
+    if "🟢" in line:
+        line = line.replace("🟢", "🟢  [000000]")
+        needs_review = True
+        modified = True
+    
+    if modified:
+        counts['total'] += 1
+    
+    if needs_review:
+        counts['needs_review'] += 1
+
+    counts['total_checkmarks'] += line.count("✅")
+    counts['total_green'] += line.count("🟢")
+    
+    return line
+
+def main():
+    input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
+    output_path = "D:\\AVIDA\\CODE\\Invoice\\Output.txt"
+    editme_path = "D:\\AVIDA\\CODE\\Invoice\\EditMe.txt"
+
+    counts = {
+        "total": 0,
+        "needs_review": 0,
+        "sum": 0,
+        "actual_total": 0,
+        "total_checkmarks": 0,
+        "total_green": 0
+    }
+    processed_lines = []
+    review_lines = []
+    
+    with open(input_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+    
+    for line in lines:
+        processed_line = process_text(line, counts)
+        if processed_line:
+            processed_lines.append(processed_line)
+            
+            if "[000000]" in processed_line:
+                review_lines.append(processed_line)
+            
+            matches = re.findall(r"\[(\d+)\]", processed_line)
+            for match in matches:
+                if match != "000000":
+                    counts['sum'] += int(match)
+    
+    counts['actual_total'] = counts['total']
+    
+    processed_lines.append(f"\nتعداد کل ✅: {counts['total_checkmarks']}\n")
+    processed_lines.append(f"تعداد کل 🟢: {counts['total_green']}\n")
+    processed_lines.append(f"مجموع رکوردها: {counts['total_checkmarks'] + counts['total_green']}\n")
+    processed_lines.append(f"تعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
+    
+    with open(output_path, "w", encoding="utf-8") as file:
+        file.writelines(processed_lines)
+    
+    with open(editme_path, "w", encoding="utf-8") as file:
+        file.writelines(review_lines)
+        file.write(f"\nتعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
+    
+    with open(output_path, "a", encoding="utf-8") as file:
+        file.write(f"جمع کل: {counts['sum']} هزار تومان\n")
+    
+if __name__ == "__main__":
+    main()
