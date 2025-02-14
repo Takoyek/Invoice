@@ -4,6 +4,13 @@ def process_text(line, counts):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
         return None  # فقط خطوط حاوی این عبارات پردازش می‌شوند
     
+    # شرط جدید برای بیست گیگ (بدون وجود صد و بیست گیگ یا صدوبیست گیگ)
+    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدوبیست گیگ"]):
+        line = re.sub(r"✅", "✅  [35]", line)
+        counts['total'] += 1
+        return line  # اگر جایگزینی انجام شد ادامه پردازش متوقف می‌شود <-- تغییر
+    
+    # بقیه شرایط اصلی
     if "شصد گیگ" in line:
         if "سی روز" in line:
             line = line.replace("✅", "✅  [78]")
@@ -60,9 +67,9 @@ def process_text(line, counts):
         else:
             line = line.replace("✅", "✅  [000000]")
     
+    # دیکشنری replacements بدون کلید بیست گیگ <-- تغییر
     replacements = {
         "ده گیگ": "✅  [25]",
-        "بیست گیگ": "✅  [35]",
         "سی گیگ": "✅  [45]",
         "چهل گیگ": "✅  [55]",
         "پنجاه گیگ": "✅  [65]",
@@ -95,6 +102,10 @@ def process_text(line, counts):
     
     return line
 
+# بقیه کد بدون تغییر می‌ماند (تابع main و ...)
+
+# بخش replacements حذف شد تا تداخلی ایجاد نشود
+
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
     output_path = "D:\\AVIDA\\CODE\\Invoice\\Output.txt"
@@ -122,7 +133,7 @@ def main():
             if "[000000]" in processed_line:
                 review_lines.append(processed_line)
             
-            matches = re.findall(r"\[(\d+)\]", processed_line)
+            matches = re.findall(r"\\[(\\d+)\\]", processed_line)
             for match in matches:
                 if match != "000000":
                     counts['sum'] += int(match)
