@@ -54,13 +54,11 @@ def extract_dates(input_path, history_path, output_path):
             file.write("این گزارش از تاریخ:\n")
             file.write("----------------------\n")
             file.write(f"{first_date.strftime('%d %b %Y')}\n")
-            file.write(f"{first_date.strftime('%d-%m-%Y')}\n")
             file.write(f"{first_shamsi}\n")
             file.write("----------------------\n")
             file.write("تا تاریخ:\n")
             file.write("----------------------\n")
             file.write(f"{last_date.strftime('%d %b %Y')}\n")
-            file.write(f"{last_date.strftime('%d-%m-%Y')}\n")
             file.write(f"{last_shamsi}\n")
             file.write("----------------------\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
@@ -104,6 +102,7 @@ def main():
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.writelines(processed_lines)
+        file.write("\n\n")
         file.write("________________________________________\n")
         file.write("________________________________________\n")
         file.write("________________________________________\n")
