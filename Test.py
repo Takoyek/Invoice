@@ -7,60 +7,22 @@ def process_text(line):
     if "ده گیگ" in line:
         return re.sub(r"✅", "✅  [25]", line)
 
-    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
+    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدوبیست گیگ"]):
         return re.sub(r"✅", "✅  [35]", line)
-
-    if "سی گیگ" in line:
-        return re.sub(r"✅", "✅  [45]", line)
-
-    if "چهل گیگ" in line and not any(phrase in line for phrase in ["صد و چهل گیگ", "صدو چهل گیگ", "صدوچهل گیگ"]):
-        if any(day in line for day in ["شصد روز", "شصت روز"]):
-            return re.sub(r"✅", "✅  [70]", line)
-        return re.sub(r"✅", "✅  [55]", line)
-
-    if "پنجاه گیگ" in line and not any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
-        return re.sub(r"✅", "✅  [65]", line)
-
-    if any(gig in line for gig in ["شصت گیگ", "شصد گیگ"]) and \
-       not any(phrase in line for phrase in ["صد و شصت گیگ", "صدو شصت گیگ", "صدوشصت گیگ"]):
-        if "نود روز" in line:
-            return re.sub(r"✅", "✅  [105]", line)
-        elif any(day in line for day in ["شصت روز", "شصد روز"]):
-            return re.sub(r"✅", "✅  [90]", line)
-        return re.sub(r"✅", "✅  [78]", line)
-
-    if "هفتاد گیگ" in line:
-        return re.sub(r"✅", "✅  [91]", line)
-
-    if "هشتاد گیگ" in line and not any(phrase in line for phrase in ["صد و هشتاد گیگ", "صدو هشتاد گیگ", "صدوهشتاد گیگ"]):
-        if any(day in line for day in ["شصت روز", "شصد روز"]):
-            return re.sub(r"✅", "✅  [110]", line)
-        return re.sub(r"✅", "✅  [104]", line)
-
-    if "نود گیگ" in line:
-        if "نود روز" in line:
-            return re.sub(r"✅", "✅  [135]", line)
-        return re.sub(r"✅", "✅  [117]", line)
-
-    if "صد گیگ" in line:
-        if "نود روز" in line:
-            return re.sub(r"✅", "✅  [150]", line)
-        return re.sub(r"✅", "✅  [130]", line)
-
-    if any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
-        if any(day in line for day in ["صد و بیست روز", "صدو بیست روز", "صدوبیست روز"]):
-            return re.sub(r"✅", "✅  [180]", line)
-        elif "نود روز" in line:
-            return re.sub(r"✅", "✅  [165]", line)
-        return re.sub(r"✅", "✅  [156]", line)
-
-    if any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
-        return re.sub(r"✅", "✅  [195]", line)
 
     if "🟢" in line:
         return line.replace("🟢", "🟢  [000000]")
 
     return line
+
+def extract_dates(input_path, history_path):
+    with open(input_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+    
+    dates = re.findall(r"\[\d{2}-[A-Za-z]{3}-\d{2} \d{2}:\d{2}\]", "".join(lines))
+    
+    with open(history_path, "w", encoding="utf-8") as file:
+        file.writelines("\n".join(dates) + "\n")
 
 def calculate_sum_from_output(output_path):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -76,6 +38,7 @@ def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
     output_path = "D:\\AVIDA\\CODE\\Invoice\\Output.txt"
     editme_path = "D:\\AVIDA\\CODE\\Invoice\\EditMe.txt"
+    history_path = "D:\\AVIDA\\CODE\\Invoice\\History.txt"
 
     processed_lines = []
     review_lines = []
@@ -108,6 +71,9 @@ def main():
     
     # محاسبه و افزودن جمع کل اعداد داخل []
     calculate_sum_from_output(output_path)
+    
+    # استخراج تاریخ‌ها و ذخیره در فایل History.txt
+    extract_dates(input_path, history_path)
 
 if __name__ == "__main__":
     main()
