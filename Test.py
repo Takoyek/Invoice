@@ -1,4 +1,6 @@
 import re
+from datetime import datetime
+from persiantools.jdatetime import JalaliDate
 
 def process_text(line):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
@@ -19,10 +21,24 @@ def extract_dates(input_path, history_path):
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     
-    dates = re.findall(r"\[\d{2}-[A-Za-z]{3}-\d{2} \d{2}:\d{2}\]", "".join(lines))
+    dates = re.findall(r"\[(\d{2})-([A-Za-z]{3})-(\d{2}) (\d{2}:\d{2})\]", "".join(lines))
+    
+    month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06",
+                 "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
+    
+    converted_dates = []
+    for day, month, year, time in dates:
+        year_full = int("20" + year)  # تبدیل سال دو رقمی به چهار رقمی
+        month_num = month_map[month]
+        day = int(day)
+        
+        miladi_date = datetime(year_full, int(month_num), day)
+        shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
+        
+        converted_dates.append(f"--------------------------------\n{day} {month} {year_full}\n{day}-{month_num}-{year_full} {time}\n{shamsi_date}\n--------------------------------\n")
     
     with open(history_path, "w", encoding="utf-8") as file:
-        file.writelines("\n".join(dates) + "\n")
+        file.writelines(converted_dates)
 
 def calculate_sum_from_output(output_path):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -72,7 +88,7 @@ def main():
     # محاسبه و افزودن جمع کل اعداد داخل []
     calculate_sum_from_output(output_path)
     
-    # استخراج تاریخ‌ها و ذخیره در فایل History.txt
+    # استخراج تاریخ‌ها، تبدیل و ذخیره در فایل History.txt
     extract_dates(input_path, history_path)
 
 if __name__ == "__main__":
