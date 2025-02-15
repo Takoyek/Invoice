@@ -17,7 +17,7 @@ def process_text(line):
 
     return line
 
-def extract_dates(input_path, history_path):
+def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     
@@ -27,18 +27,44 @@ def extract_dates(input_path, history_path):
                  "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
     
     converted_dates = []
+    miladi_dates = []
     for day, month, year, time in dates:
-        year_full = int("20" + year)  # تبدیل سال دو رقمی به چهار رقمی
+        year_full = int("20" + year)
         month_num = month_map[month]
         day = int(day)
         
         miladi_date = datetime(year_full, int(month_num), day)
         shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
+        miladi_dates.append(miladi_date)
         
         converted_dates.append(f"--------------------------------\n{day} {month} {year_full}\n{day}-{month_num}-{year_full} {time}\n{shamsi_date}\n--------------------------------\n")
     
     with open(history_path, "w", encoding="utf-8") as file:
         file.writelines(converted_dates)
+    
+    if miladi_dates:
+        first_date = miladi_dates[0]
+        last_date = miladi_dates[-1]
+        date_diff = (last_date - first_date).days
+        first_shamsi = JalaliDate(first_date).strftime("%Y/%m/%d")
+        last_shamsi = JalaliDate(last_date).strftime("%Y/%m/%d")
+        
+        with open(output_path, "a", encoding="utf-8") as file:
+            file.write("\n________________________________________\n")
+            file.write("این گزارش از تاریخ:\n")
+            file.write("----------------------\n")
+            file.write(f"{first_date.strftime('%d %b %Y')}\n")
+            file.write(f"{first_date.strftime('%d-%m-%Y')}\n")
+            file.write(f"{first_shamsi}\n")
+            file.write("----------------------\n")
+            file.write("تا تاریخ:\n")
+            file.write("----------------------\n")
+            file.write(f"{last_date.strftime('%d %b %Y')}\n")
+            file.write(f"{last_date.strftime('%d-%m-%Y')}\n")
+            file.write(f"{last_shamsi}\n")
+            file.write("----------------------\n")
+            file.write(f"فاصله زمانی: {date_diff} روز\n")
+            file.write("________________________________________\n")
 
 def calculate_sum_from_output(output_path):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -48,7 +74,8 @@ def calculate_sum_from_output(output_path):
     total_sum = sum(numbers)
     
     with open(output_path, "a", encoding="utf-8") as file:
-        file.write(f"\nجمع کل: {total_sum} تومان\n")
+        file.write("________________________________________\n")
+        file.write(f"جمع کل: {total_sum} هزار تومان\n")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -77,19 +104,21 @@ def main():
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.writelines(processed_lines)
-        file.write(f"\nتعداد کل ✅: {total_checkmarks} عدد\n")
-        file.write(f"\nتعداد کل 🟢: {total_green_marks} عدد\n")
-        file.write(f"\nتعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
+        file.write("________________________________________\n")
+        file.write("________________________________________\n")
+        file.write("________________________________________\n")
+        file.write(f"تعداد کل ✅: {total_checkmarks} عدد\n")
+        file.write(f"تعداد کل 🟢: {total_green_marks} عدد\n")
+        file.write("----------------------\n")
+        file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
+        file.write("________________________________________")
     
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
         file.write(f"\nتعداد کل 🟢: {total_green_marks} عدد\n")
     
-    # محاسبه و افزودن جمع کل اعداد داخل []
+    extract_dates(input_path, history_path, output_path)
     calculate_sum_from_output(output_path)
-    
-    # استخراج تاریخ‌ها، تبدیل و ذخیره در فایل History.txt
-    extract_dates(input_path, history_path)
 
 if __name__ == "__main__":
     main()

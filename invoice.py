@@ -1,148 +1,171 @@
 import re
+from datetime import datetime
+from persiantools.jdatetime import JalaliDate
 
-def process_text(line, counts):
+def process_text(line):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "🟢"]):
-        return None  # فقط خطوط حاوی این عبارات پردازش می‌شوند
-    
-    if "شصد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [78]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [90]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [105]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "هفتاد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [91]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "هشتاد گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [104]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [110]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "نود گیگ" in line:
-        if "سی روز" in line:
-            line = line.replace("✅", "✅  [117]")
-        elif "شصد روز" in line:
-            line = line.replace("✅", "✅  [125]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [135]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line:
-            line = line.replace("✅", "✅  [130]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [150]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد و بیست گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line:
-            line = line.replace("✅", "✅  [156]")
-        elif "نود روز" in line:
-            line = line.replace("✅", "✅  [165]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    if "صد و پنجاه گیگ" in line:
-        if "سی روز" in line or "شصد روز" in line or "نود روز" in line:
-            line = line.replace("✅", "✅  [195]")
-        else:
-            line = line.replace("✅", "✅  [000000]")
-    
-    replacements = {
-        "ده گیگ": "✅  [25]",
-        "بیست گیگ": "✅  [35]",
-        "سی گیگ": "✅  [45]",
-        "چهل گیگ": "✅  [55]",
-        "پنجاه گیگ": "✅  [65]",
-        "صدو بیست گیگ": "✅  [000000]",
-        "صدو پنجاه گیگ": "✅  [000000]"
-    }
-    
-    modified = False
-    needs_review = False
-    for key, value in replacements.items():
-        if key in line:
-            line = re.sub(r"✅", value, line)
-            modified = True
-            if "000000" in value:
-                needs_review = True
-    
-    if "🟢" in line:
-        line = line.replace("🟢", "🟢  [000000]")
-        needs_review = True
-        modified = True
-    
-    if modified:
-        counts['total'] += 1
-    
-    if needs_review:
-        counts['needs_review'] += 1
+        return None
 
-    counts['total_checkmarks'] += line.count("✅")
-    counts['total_green'] += line.count("🟢")
-    
+    if "ده گیگ" in line:
+        return re.sub(r"✅", "✅  [25]", line)
+
+    if "بیست گیگ" in line and not any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
+        return re.sub(r"✅", "✅  [35]", line)
+
+    if "سی گیگ" in line:
+        return re.sub(r"✅", "✅  [45]", line)
+
+    if "چهل گیگ" in line and not any(phrase in line for phrase in ["صد و چهل گیگ", "صدو چهل گیگ", "صدوچهل گیگ"]):
+        if any(day in line for day in ["شصد روز", "شصت روز"]):
+            return re.sub(r"✅", "✅  [70]", line)
+        return re.sub(r"✅", "✅  [55]", line)
+
+    if "پنجاه گیگ" in line and not any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
+        return re.sub(r"✅", "✅  [65]", line)
+
+    if any(gig in line for gig in ["شصت گیگ", "شصد گیگ"]) and \
+       not any(phrase in line for phrase in ["صد و شصت گیگ", "صدو شصت گیگ", "صدوشصت گیگ"]):
+        if "نود روز" in line:
+            return re.sub(r"✅", "✅  [105]", line)
+        elif any(day in line for day in ["شصت روز", "شصد روز"]):
+            return re.sub(r"✅", "✅  [90]", line)
+        return re.sub(r"✅", "✅  [78]", line)
+
+    if "هفتاد گیگ" in line:
+        return re.sub(r"✅", "✅  [91]", line)
+
+    if "هشتاد گیگ" in line and not any(phrase in line for phrase in ["صد و هشتاد گیگ", "صدو هشتاد گیگ", "صدوهشتاد گیگ"]):
+        if any(day in line for day in ["شصت روز", "شصد روز"]):
+            return re.sub(r"✅", "✅  [110]", line)
+        return re.sub(r"✅", "✅  [104]", line)
+
+    if "نود گیگ" in line:
+        if "نود روز" in line:
+            return re.sub(r"✅", "✅  [135]", line)
+        return re.sub(r"✅", "✅  [117]", line)
+
+    if "صد گیگ" in line:
+        if "نود روز" in line:
+            return re.sub(r"✅", "✅  [150]", line)
+        return re.sub(r"✅", "✅  [130]", line)
+
+    if any(phrase in line for phrase in ["صد و بیست گیگ", "صدو بیست گیگ", "صدوبیست گیگ"]):
+        if any(day in line for day in ["صد و بیست روز", "صدو بیست روز", "صدوبیست روز"]):
+            return re.sub(r"✅", "✅  [180]", line)
+        elif "نود روز" in line:
+            return re.sub(r"✅", "✅  [165]", line)
+        return re.sub(r"✅", "✅  [156]", line)
+
+    if any(phrase in line for phrase in ["صد و پنجاه گیگ", "صدو پنجاه گیگ", "صدوپنجاه گیگ"]):
+        return re.sub(r"✅", "✅  [195]", line)
+
+    if "🟢" in line:
+        return line.replace("🟢", "🟢  [000000]")
+
     return line
+
+def extract_dates(input_path, history_path, output_path):
+    with open(input_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+    
+    dates = re.findall(r"\[(\d{2})-([A-Za-z]{3})-(\d{2}) (\d{2}:\d{2})\]", "".join(lines))
+    
+    month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06",
+                 "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
+    
+    converted_dates = []
+    miladi_dates = []
+    for day, month, year, time in dates:
+        year_full = int("20" + year)
+        month_num = month_map[month]
+        day = int(day)
+        
+        miladi_date = datetime(year_full, int(month_num), day)
+        shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
+        miladi_dates.append(miladi_date)
+        
+        converted_dates.append(f"--------------------------------\n{day} {month} {year_full}\n{day}-{month_num}-{year_full} {time}\n{shamsi_date}\n--------------------------------\n")
+    
+    with open(history_path, "w", encoding="utf-8") as file:
+        file.writelines(converted_dates)
+    
+    if miladi_dates:
+        first_date = miladi_dates[0]
+        last_date = miladi_dates[-1]
+        date_diff = (last_date - first_date).days
+        first_shamsi = JalaliDate(first_date).strftime("%Y/%m/%d")
+        last_shamsi = JalaliDate(last_date).strftime("%Y/%m/%d")
+        
+        with open(output_path, "a", encoding="utf-8") as file:
+            file.write("\n________________________________________\n")
+            file.write("این گزارش از تاریخ:\n")
+            file.write("----------------------\n")
+            file.write(f"{first_date.strftime('%d %b %Y')}\n")
+            file.write(f"{first_date.strftime('%d-%m-%Y')}\n")
+            file.write(f"{first_shamsi}\n")
+            file.write("----------------------\n")
+            file.write("تا تاریخ:\n")
+            file.write("----------------------\n")
+            file.write(f"{last_date.strftime('%d %b %Y')}\n")
+            file.write(f"{last_date.strftime('%d-%m-%Y')}\n")
+            file.write(f"{last_shamsi}\n")
+            file.write("----------------------\n")
+            file.write(f"فاصله زمانی: {date_diff} روز\n")
+            file.write("________________________________________\n")
+
+def calculate_sum_from_output(output_path):
+    with open(output_path, "r", encoding="utf-8") as file:
+        content = file.read()
+    
+    numbers = [int(num) for num in re.findall(r"\[(\d+)\]", content)]
+    total_sum = sum(numbers)
+    
+    with open(output_path, "a", encoding="utf-8") as file:
+        file.write("________________________________________\n")
+        file.write(f"جمع کل: {total_sum} هزار تومان\n")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
     output_path = "D:\\AVIDA\\CODE\\Invoice\\Output.txt"
     editme_path = "D:\\AVIDA\\CODE\\Invoice\\EditMe.txt"
+    history_path = "D:\\AVIDA\\CODE\\Invoice\\History.txt"
 
-    counts = {
-        "total": 0,
-        "needs_review": 0,
-        "sum": 0,
-        "actual_total": 0,
-        "total_checkmarks": 0,
-        "total_green": 0
-    }
     processed_lines = []
     review_lines = []
+
+    total_checkmarks = 0
+    total_green_marks = 0
     
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
-    
+
     for line in lines:
-        processed_line = process_text(line, counts)
+        total_checkmarks += line.count("✅")
+        total_green_marks += line.count("🟢")
+        
+        processed_line = process_text(line)
         if processed_line:
             processed_lines.append(processed_line)
-            
             if "[000000]" in processed_line:
                 review_lines.append(processed_line)
-            
-            matches = re.findall(r"\[(\d+)\]", processed_line)
-            for match in matches:
-                if match != "000000":
-                    counts['sum'] += int(match)
-    
-    counts['actual_total'] = counts['total']
-    
-    processed_lines.append(f"\nتعداد کل ✅: {counts['total_checkmarks']}\n")
-    processed_lines.append(f"تعداد کل 🟢: {counts['total_green']}\n")
-    processed_lines.append(f"مجموع رکوردها: {counts['total_checkmarks'] + counts['total_green']}\n")
-    processed_lines.append(f"تعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
-    
+
     with open(output_path, "w", encoding="utf-8") as file:
         file.writelines(processed_lines)
+        file.write("________________________________________\n")
+        file.write("________________________________________\n")
+        file.write("________________________________________\n")
+        file.write(f"تعداد کل ✅: {total_checkmarks} عدد\n")
+        file.write(f"تعداد کل 🟢: {total_green_marks} عدد\n")
+        file.write("----------------------\n")
+        file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
+        file.write("________________________________________")
     
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
-        file.write(f"\nتعداد رکوردهایی که نیاز به بررسی دارد: {counts['needs_review']} عدد\n")
+        file.write(f"\nتعداد کل 🟢: {total_green_marks} عدد\n")
     
-    with open(output_path, "a", encoding="utf-8") as file:
-        file.write(f"جمع کل: {counts['sum']} هزار تومان\n")
-    
+    extract_dates(input_path, history_path, output_path)
+    calculate_sum_from_output(output_path)
+
 if __name__ == "__main__":
     main()
