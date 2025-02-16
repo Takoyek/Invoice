@@ -25,10 +25,10 @@ def process_text(line):
 
     if any(gig in line for gig in ["شصت گیگ", "شصد گیگ"]) and \
        not any(phrase in line for phrase in ["صد و شصت گیگ", "صدو شصت گیگ", "صدوشصت گیگ"]):
-        if "نود روز" in line:
-            return re.sub(r"✅", "✅  [105]", line)
-        elif any(day in line for day in ["شصت روز", "شصد روز"]):
+        if any(day in line for day in ["شصت روز", "شصد روز"]):
             return re.sub(r"✅", "✅  [90]", line)
+        elif "نود روز" in line:
+            return re.sub(r"✅", "✅  [105]", line)
         return re.sub(r"✅", "✅  [78]", line)
 
     if "هفتاد گیگ" in line:
@@ -40,7 +40,9 @@ def process_text(line):
         return re.sub(r"✅", "✅  [104]", line)
 
     if "نود گیگ" in line:
-        if "نود روز" in line:
+        if any(day in line for day in ["شصت روز", "شصد روز"]):
+            return re.sub(r"✅", "✅  [120]", line)
+        elif "نود روز" in line:
             return re.sub(r"✅", "✅  [135]", line)
         return re.sub(r"✅", "✅  [117]", line)
 
