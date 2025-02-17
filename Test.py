@@ -1,6 +1,6 @@
-import re
 from datetime import datetime
 from persiantools.jdatetime import JalaliDate
+import re
 
 def process_text(line):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅", "🟢"]):
@@ -33,23 +33,26 @@ def process_text(line):
         (r"ده (گیگ|گیک|کیگ|کیک)", "✅  [25]")
     ]
 
-    matched = False  # متغیر برای بررسی اینکه آیا جایگزینی انجام شده است یا نه
-
+    matched = False
     for pattern, replacement in mappings:
         if re.search(pattern, line):
             line = re.sub(r"✅", replacement, line)
             matched = True
-            break  # پس از اولین جایگزینی موفق، حلقه متوقف شود
+            break
 
-    # تغییر مقدار `line` پس از جایگزینی 🟢
+    # اگر هیچ جایگزینی انجام نشد، بررسی کنیم که آیا جمله فقط شامل تمدید شد ✅ است
+    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+        line = re.sub(r"✅", "✅  [45]", line)
+        matched = True
+
     if "🟢" in line:
         line = line.replace("🟢", "🟢  [000000]")
 
-    # اگر هیچ جایگزینی انجام نشد، "✅" را به "✅  [000000]" تغییر بده
     if not matched:
         line = re.sub(r"✅", "✅  [000000]", line)
 
-    return line + "\n"  # افزودن کاراکتر newline در انتهای هر خط خروجی
+    return line + "\n"
+
 
 def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
