@@ -110,8 +110,8 @@ def calculate_sum_from_output(output_path):
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
         file.write("مانده حساب قبلی: `000`\n\n")
-        file.write("تا تاریخ: 1403/00/00\n")
-        file.write("جمع کل مانده حساب شما:  `000` هزار تومان")
+        file.write("جمع مانده حساب تا تاریخ 1403/00/00\n")
+        file.write("مبلغ:  `000` هزار تومان")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
