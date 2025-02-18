@@ -4,9 +4,8 @@ import re
 
 def process_text(line):
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅", "🟢"]):
-        return None  # در این حالت خط حذف می‌شود
+        return None 
 
-    # حذف فاصله‌های اضافی و نرمال‌سازی متن
     line = re.sub(r"\s+", " ", line).strip()
 
     mappings = [
@@ -40,7 +39,6 @@ def process_text(line):
             matched = True
             break
 
-    # اگر هیچ جایگزینی انجام نشد، بررسی کنیم که آیا جمله فقط شامل تمدید شد ✅ است
     if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
         line = re.sub(r"✅", "✅  [45]", line)
         matched = True
@@ -100,7 +98,6 @@ def extract_dates(input_path, history_path, output_path):
             file.write(f"{last_shamsi}\n")
             file.write("----------------------\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
-#            file.write("________________________________________\n")
 
 def calculate_sum_from_output(output_path):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -112,11 +109,9 @@ def calculate_sum_from_output(output_path):
     with open(output_path, "a", encoding="utf-8") as file:
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
         file.write("💰\n")
-#        file.write("________________________________________\n")
-#        file.write("\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
-        file.write("مانده حساب قبلی: `000`\n")
+        file.write("مانده حساب قبلی: `000`\n\n")
         file.write("تا تاریخ: 1403/00/00\n")
         file.write("جمع کل مانده حساب شما:  `000` هزار تومان")
 
@@ -152,20 +147,13 @@ def main():
     with open(output_path, "w", encoding="utf-8") as file:
         file.write("🧮 خلاصه فاکتور شما:\n")  # اضافه کردن متن در ابتدای فایل
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-#        file.write("\n")
         file.write("🔍\n")
         file.writelines(processed_lines)
         file.write("\n")
-        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-#        file.write("________________________________________\n")
-#        file.write("________________________________________\n")
-#        file.write("\n")
-        file.write("🆕\n")
+        file.write("--------------\n")
         file.write(f"تعداد تمدیدها ✅: {total_checkmarks} عدد\n")
         file.write(f"تعداد خرید های جدید 🟢: {total_green_marks} عدد\n")
-        file.write("-------------------------------------\n")
         file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
-#        file.write("________________________________________")
     
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
