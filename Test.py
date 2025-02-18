@@ -42,7 +42,7 @@ def process_text(line):
 
     # اگر هیچ جایگزینی انجام نشد، بررسی کنیم که آیا جمله فقط شامل تمدید شد ✅ است
     if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-        line = re.sub(r"✅", "✅  [45]", line)
+        line = re.sub(r"✅", "✅  [75]", line)
         matched = True
 
     if "🟢" in line:
