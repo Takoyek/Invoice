@@ -87,8 +87,8 @@ def extract_dates(input_path, history_path, output_path):
         last_shamsi = JalaliDate(last_date).strftime("%Y/%m/%d")
         
         with open(output_path, "a", encoding="utf-8") as file:
-            file.write("\n________________________________________\n")
-            file.write("\n")
+            file.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            file.write("📅\n")
             file.write("این گزارش از تاریخ:\n")
             file.write("----------------------\n")
             file.write(f"{first_date.strftime('%d %b %Y')}\n")
@@ -111,8 +111,9 @@ def calculate_sum_from_output(output_path):
     
     with open(output_path, "a", encoding="utf-8") as file:
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+        file.write("💰\n")
 #        file.write("________________________________________\n")
-        file.write("\n")
+#        file.write("\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
         file.write("مانده حساب قبلی: `000`\n")
@@ -134,9 +135,13 @@ def main():
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
+    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
+
     for line in lines:
-        total_checkmarks += line.count("✅")
+        total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
         total_green_marks += line.count("🟢")
+
+
         
         processed_line = process_text(line)
         if processed_line:
@@ -146,19 +151,21 @@ def main():
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write("🧮 خلاصه فاکتور شما:\n")  # اضافه کردن متن در ابتدای فایل
-        file.write("________________________________________\n")
-        file.write("\n")
+        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+#        file.write("\n")
+        file.write("🔍\n")
         file.writelines(processed_lines)
         file.write("\n")
-        file.write("________________________________________\n")
-        file.write("________________________________________\n")
-        file.write("________________________________________\n")
-        file.write("\n")
+        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+#        file.write("________________________________________\n")
+#        file.write("________________________________________\n")
+#        file.write("\n")
+        file.write("🆕\n")
         file.write(f"تعداد تمدیدها ✅: {total_checkmarks} عدد\n")
         file.write(f"تعداد خرید های جدید 🟢: {total_green_marks} عدد\n")
         file.write("-------------------------------------\n")
         file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
-        file.write("________________________________________")
+#        file.write("________________________________________")
     
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
