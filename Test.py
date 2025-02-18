@@ -42,7 +42,7 @@ def process_text(line):
 
     # اگر هیچ جایگزینی انجام نشد، بررسی کنیم که آیا جمله فقط شامل تمدید شد ✅ است
     if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-        line = re.sub(r"✅", "✅  [75]", line)
+        line = re.sub(r"✅", "✅  [85]", line)
         matched = True
 
     if "🟢" in line:
@@ -88,6 +88,7 @@ def extract_dates(input_path, history_path, output_path):
         
         with open(output_path, "a", encoding="utf-8") as file:
             file.write("\n________________________________________\n")
+            file.write("\n")
             file.write("این گزارش از تاریخ:\n")
             file.write("----------------------\n")
             file.write(f"{first_date.strftime('%d %b %Y')}\n")
@@ -110,7 +111,8 @@ def calculate_sum_from_output(output_path):
     
     with open(output_path, "a", encoding="utf-8") as file:
         file.write("________________________________________\n")
-        file.write(f"جمع کل: {total_sum} هزار تومان\n")
+        file.write("\n")
+        file.write(f"جمع کل: `{total_sum}` هزار تومان\n")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -139,12 +141,13 @@ def main():
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.writelines(processed_lines)
-        file.write("\n\n")
+        file.write("\n")
         file.write("________________________________________\n")
         file.write("________________________________________\n")
         file.write("________________________________________\n")
-        file.write(f"تعداد کل ✅: {total_checkmarks} عدد\n")
-        file.write(f"تعداد کل 🟢: {total_green_marks} عدد\n")
+        file.write("\n")
+        file.write(f"تعداد تمدیدها ✅: {total_checkmarks} عدد\n")
+        file.write(f"تعداد خرید های جدید 🟢: {total_green_marks} عدد\n")
         file.write("----------------------\n")
         file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
         file.write("________________________________________")
