@@ -8,30 +8,32 @@ def process_text(line):
 
     line = re.sub(r"\s+", " ", line).strip()
 
-    GIGABYTE = "(گیگ|گیک|کیگ|گبگ|کیک)"
+    gig_variations = "(گیگ|گیک|کیگ|گبگ|کیک)"
+    sad_o_space = r"صد[ .]?و?[ .]?"
+
     mappings = [
-        (rf"صد[ .]?و?[ .]?پنجاه {GIGABYTE}", "✅  [195]"),
-        (rf"صد[ .]?و?[ .]?بیست {GIGABYTE}.*?(صد[ .]?و?[ .]?بیست روز)", "✅  [180]"),
-        (rf"صد[ .]?و?[ .]?بیست {GIGABYTE}.*?نود روز", "✅  [165]"),
-        (rf"صد[ .]?و?[ .]?بیست {GIGABYTE}", "✅  [156]"),
-        (rf"\bصد {GIGABYTE}\b.*?نود روز", "✅  [150]"),
-        (rf"\bصد {GIGABYTE}\b", "✅  [170]"),
-        (rf"نود {GIGABYTE}.*?نود روز", "✅  [135]"),
-        (rf"نود {GIGABYTE}.*?(شصت روز|شصد روز)", "✅  [120]"),
-        (rf"نود {GIGABYTE}", "✅  [117]"),
-        (rf"هشتاد {GIGABYTE}(?!.*صد[ .]?و?[ .]?هشتاد {GIGABYTE}).*?(شصت روز|شصد روز)", "✅  [110]"),
-        (rf"هشتاد {GIGABYTE}(?!.*صد[ .]?و?[ .]?هشتاد {GIGABYTE})", "✅  [104]"),
-        (rf"هفتاد {GIGABYTE}", "✅  [91]"),
-        (rf"(شصت|شصد) {GIGABYTE}(?!.*صد[ .]?و?[ .]?(شصت|شصد) {GIGABYTE}).*?نود روز", "✅  [105]"),
-        (rf"(شصت|شصد) {GIGABYTE}(?!.*صد[ .]?و?[ .]?(شصت|شصد) {GIGABYTE}).*?(شصت روز|شصد روز)", "✅  [90]"),
-        (rf"(شصت|شصد) {GIGABYTE}(?!.*صد[ .]?و?[ .]?(شصت|شصد) {GIGABYTE})", "✅  [78]"),
-        (rf"پنجاه {GIGABYTE}(?!.*صد[ .]?و?[ .]?پنجاه {GIGABYTE})", "✅  [85]"),
-        (rf"چهل {GIGABYTE}(?!.*صد[ .]?و?[ .]?چهل {GIGABYTE}).*?(شصت روز|شصد روز)", "✅  [70]"),
-        (rf"چهل {GIGABYTE}(?!.*صد[ .]?و?[ .]?چهل {GIGABYTE})", "✅  [55]"),
-        (rf"سی {GIGABYTE}", "✅  [65]"),
-        (rf"بیست {GIGABYTE}(?!.*صد[ .]?و?[ .]?بیست {GIGABYTE})", "✅  [35]"),
-        (rf"ده {GIGABYTE}", "✅  [25]")
-    ]
+        (rf"{sad_o_space}پنجاه {gig_variations}", "✅  [195]"),
+        (rf"{sad_o_space}بیست {gig_variations}.*?({sad_o_space}بیست روز)", "✅  [180]"),
+        (rf"{sad_o_space}بیست {gig_variations}.*?نود روز", "✅  [165]"),
+        (rf"{sad_o_space}بیست {gig_variations}", "✅  [156]"),
+        (rf"\bصد {gig_variations}\b.*?نود روز", "✅  [150]"),
+        (rf"\bصد {gig_variations}\b", "✅  [170]"),
+        (rf"نود {gig_variations}.*?نود روز", "✅  [135]"),
+        (rf"نود {gig_variations}.*?(شصت روز|شصد روز)", "✅  [120]"),
+        (rf"نود {gig_variations}", "✅  [117]"),
+        (rf"هشتاد {gig_variations}(?!.*{sad_o_space}هشتاد {gig_variations}).*?(شصت روز|شصد روز)", "✅  [110]"),
+        (rf"هشتاد {gig_variations}(?!.*{sad_o_space}هشتاد {gig_variations})", "✅  [104]"),
+        (rf"هفتاد {gig_variations}", "✅  [91]"),
+        (rf"(شصت|شصد) {gig_variations}(?!.*{sad_o_space}(شصت|شصد) {gig_variations}).*?نود روز", "✅  [105]"),
+        (rf"(شصت|شصد) {gig_variations}(?!.*{sad_o_space}(شصت|شصد) {gig_variations}).*?(شصت روز|شصد روز)", "✅  [90]"),
+        (rf"(شصت|شصد) {gig_variations}(?!.*{sad_o_space}(شصت|شصد) {gig_variations})", "✅  [78]"),
+        (rf"پنجاه {gig_variations}(?!.*{sad_o_space}پنجاه {gig_variations})", "✅  [85]"),
+        (rf"چهل {gig_variations}(?!.*{sad_o_space}چهل {gig_variations}).*?(شصت روز|شصد روز)", "✅  [70]"),
+        (rf"چهل {gig_variations}(?!.*{sad_o_space}چهل {gig_variations})", "✅  [55]"),
+        (rf"سی {gig_variations}", "✅  [65]"),
+        (rf"بیست {gig_variations}(?!.*{sad_o_space}بیست {gig_variations})", "✅  [35]"),
+        (rf"ده {gig_variations}", "✅  [25]")
+        ]
 
     matched = False 
 
