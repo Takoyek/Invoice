@@ -48,7 +48,7 @@ def process_text(line):
             break 
 
     if "🟢" in line:
-        line = line.replace("🟢", "🟢  [45]")
+        line = line.replace("🟢", "  [45]  🟢")
 
     # اگر هیچ جایگزینی انجام نشد
     if not matched:
