@@ -54,7 +54,7 @@ def process_text(line):
 
     #  قیمت کانفیگ جدید 🟢
     if "🟢" in line:
-        line = line.replace("🟢", "  [000000]  🟢")
+        line = line.replace("🟢", " [000000]  🟢")
 
     #  خطوط نامفهوم 000000
     if not matched:
