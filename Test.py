@@ -48,15 +48,15 @@ def process_text(line):
             break 
 
     #  قیمت دلخواه برای تمدید شد ✅
-#    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-#        line = re.sub(r"✅", "✅  [6666]", line)
-#        matched = True
+    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+        line = re.sub(r"✅", "✅  [75]", line)
+        matched = True
 
     #  قیمت کانفیگ جدید 🟢
     if "🟢" in line:
         line = line.replace("🟢", "  [000000]  🟢")
 
-    #  خطوط نامفهوم
+    #  خطوط نامفهوم 000000
     if not matched:
         line = re.sub(r"✅", "✅  [000000]", line)
 
@@ -124,7 +124,6 @@ def calculate_sum_from_output(output_path, MANDEH, RUZ):
         file.write("-----------------------------\n")
         file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n")
         file.write("-----------------------------\n")
-#        file.write("📝\n")
         file.write(f"در تاریخ:  1403/12/{RUZ}\n")
         file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
 
@@ -158,7 +157,6 @@ def main():
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(" 🧮  صورتحساب شما:\n")
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
-#        file.write("📝\n")
         file.writelines(processed_lines)
         file.write("\n")
         file.write("--------------\n")
