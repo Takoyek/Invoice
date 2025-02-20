@@ -49,14 +49,14 @@ def process_text(line):
 
     #  قیمت دلخواه برای تمدید شد ✅
     if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-        line = re.sub(r"✅", "✅  [85]", line)
+        line = re.sub(r"✅", "✅  [11111]", line)
         matched = True
 
-    #  قیمت فروش کانفیگ جدید 🟢
+    #  قیمت کانفیگ جدید 🟢
     if "🟢" in line:
-        line = line.replace("🟢", "  [45]  🟢")
+        line = line.replace("🟢", "  [222222]  🟢")
 
-    # اگر هیچ جایگزینی انجام نشد
+    #  خطوط نامفهوم
     if not matched:
         line = re.sub(r"✅", "✅  [000000]", line)
 
@@ -110,21 +110,21 @@ def extract_dates(input_path, history_path, output_path):
             file.write("----------------------\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
 
-def calculate_sum_from_output(output_path):
+def calculate_sum_from_output(output_path, MANDEH, RUZ):
     with open(output_path, "r", encoding="utf-8") as file:
         content = file.read()
-    
+
     numbers = [int(num) for num in re.findall(r"\[(\d+)\]", content)]
     total_sum = sum(numbers)
-    
+
     with open(output_path, "a", encoding="utf-8") as file:
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-        file.write("💰\n")
+        file.write("\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
-        file.write("مانده حساب قبلی: `000`\n\n")
-        file.write("جمع مانده حساب تا تاریخ 1403/12/00\n")
-        file.write("مبلغ:  `000` هزار تومان")
+        file.write(f"مانده از قبل: `{MANDEH}`\n\n")
+        file.write(f"جمع مانده حساب تا تاریخ 1403/12/{RUZ}\n")
+        file.write(f"مبلغ:  `{int(MANDEH) + total_sum}` هزار تومان")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -137,16 +137,16 @@ def main():
 
     total_checkmarks = 0
     total_green_marks = 0
-    
+
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
-    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
+    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
 
     for line in lines:
         total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
         total_green_marks += line.count("🟢")
-        
+
         processed_line = process_text(line)
         if processed_line:
             processed_lines.append(processed_line)
@@ -154,22 +154,25 @@ def main():
                 review_lines.append(processed_line)
 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write("🧮 خلاصه فاکتور شما:\n")  # اضافه کردن متن در ابتدای فایل
+        file.write(" خلاصه فاکتور شما:\n")
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-        file.write("🔍\n")
+        file.write("\n")
         file.writelines(processed_lines)
         file.write("\n")
         file.write("--------------\n")
         file.write(f"تعداد تمدیدها ✅: {total_checkmarks} عدد\n")
         file.write(f"تعداد خرید های جدید 🟢: {total_green_marks} عدد\n")
         file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
-    
+
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
         file.write(f"\nتعداد کل 🟢: {total_green_marks} عدد\n")
-    
+
     extract_dates(input_path, history_path, output_path)
-    calculate_sum_from_output(output_path)
+
+    MANDEH = input("لطفا مانده حساب قبلی را وارد کنید: ")
+    RUZ = input("امروز چندمین روز از ماه جاری است؟ ")
+    calculate_sum_from_output(output_path, MANDEH, RUZ)
 
 if __name__ == "__main__":
     main()

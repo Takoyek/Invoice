@@ -47,11 +47,16 @@ def process_text(line):
             matched = True
             break 
 
-    #  قیمت فروش کانفیگ جدید 🟢
-    if "🟢" in line:
-        line = line.replace("🟢", "  [45]  🟢")
+    #  قیمت دلخواه برای تمدید شد ✅
+    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+        line = re.sub(r"✅", "✅  [11111]", line)
+        matched = True
 
-    # اگر هیچ جایگزینی انجام نشد
+    #  قیمت کانفیگ جدید 🟢
+    if "🟢" in line:
+        line = line.replace("🟢", "  [222222]  🟢")
+
+    #  خطوط نامفهوم
     if not matched:
         line = re.sub(r"✅", "✅  [000000]", line)
 
@@ -105,7 +110,7 @@ def extract_dates(input_path, history_path, output_path):
             file.write("----------------------\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
 
-def calculate_sum_from_output(output_path, mandeh_hesab_ghabli):  # تابع جدید با گرفتن مانده حساب قبلی
+def calculate_sum_from_output(output_path, MANDEH, RUZ):
     with open(output_path, "r", encoding="utf-8") as file:
         content = file.read()
 
@@ -117,10 +122,9 @@ def calculate_sum_from_output(output_path, mandeh_hesab_ghabli):  # تابع ج�
         file.write("\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
-        file.write(f"مانده حساب قبلی: `{mandeh_hesab_ghabli}`\n\n")  # استفاده از متغیر جدید
-        file.write("جمع مانده حساب تا تاریخ 1403/12/00\n")
-        file.write(f"مبلغ:  `{int(mandeh_hesab_ghabli) + total_sum}` هزار تومان")  # محاسبه و نمایش جمع مانده حساب
-
+        file.write(f"مانده از قبل: `{MANDEH}`\n\n")
+        file.write(f"جمع مانده حساب تا تاریخ 1403/12/{RUZ}\n")
+        file.write(f"مبلغ:  `{int(MANDEH) + total_sum}` هزار تومان")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -150,7 +154,7 @@ def main():
                 review_lines.append(processed_line)
 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(" خلاصه فاکتور شما:\n")  # اضافه کردن متن در ابتدای فایل
+        file.write(" خلاصه فاکتور شما:\n")
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
         file.write("\n")
         file.writelines(processed_lines)
@@ -166,9 +170,9 @@ def main():
 
     extract_dates(input_path, history_path, output_path)
 
-    mandeh_hesab_ghabli = input("لطفا مانده حساب قبلی را وارد کنید: ")  # گرفتن ورودی از کاربر
-    calculate_sum_from_output(output_path, mandeh_hesab_ghabli)  # ارسال به تابع جدید
-
+    MANDEH = input("لطفا مانده حساب قبلی را وارد کنید: ")
+    RUZ = input("امروز چندمین روز از ماه جاری است؟ ")
+    calculate_sum_from_output(output_path, MANDEH, RUZ)
 
 if __name__ == "__main__":
     main()
