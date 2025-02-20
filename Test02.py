@@ -9,12 +9,6 @@ def process_text(line):
     line = re.sub(r"\s+", " ", line).strip()
 
     GIG = "(گیگ|گیک|کیگ|گبگ|کیک)"
-    SPC = r"صد[ .]?و?[ .]?"
-    SHST = "(شصت|شصد)"
-    SHST_R = "(شصت روز|شصد روز)"
-    NVD_R = "نود روز"
-
-    GIG = "(گیگ|گیک|کیگ|گبگ|کیک)"
     SAD = r"صد[ .]?و?[ .]?"
     SHST = "(شصت|شصد)"
     SHST_R = "(شصت روز|شصد روز)"
@@ -53,8 +47,9 @@ def process_text(line):
             matched = True
             break 
 
+    #  قیمت فروش کانفیگ جدید 🟢
     if "🟢" in line:
-        line = line.replace("🟢", "🟢  [000000]")
+        line = line.replace("🟢", "  [45]  🟢")
 
     # اگر هیچ جایگزینی انجام نشد
     if not matched:
@@ -123,7 +118,7 @@ def calculate_sum_from_output(output_path):
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
         file.write("مانده حساب قبلی: `000`\n\n")
-        file.write("جمع مانده حساب تا تاریخ 1403/00/00\n")
+        file.write("جمع مانده حساب تا تاریخ 1403/12/00\n")
         file.write("مبلغ:  `000` هزار تومان")
 
 def main():
@@ -146,8 +141,6 @@ def main():
     for line in lines:
         total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
         total_green_marks += line.count("🟢")
-
-
         
         processed_line = process_text(line)
         if processed_line:

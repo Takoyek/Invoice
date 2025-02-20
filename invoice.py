@@ -47,6 +47,7 @@ def process_text(line):
             matched = True
             break 
 
+    #  قیمت فروش کانفیگ جدید 🟢
     if "🟢" in line:
         line = line.replace("🟢", "  [45]  🟢")
 
