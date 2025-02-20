@@ -48,13 +48,13 @@ def process_text(line):
             break 
 
     #  قیمت دلخواه برای تمدید شد ✅
-    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-        line = re.sub(r"✅", "✅  [11111]", line)
-        matched = True
+#    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+#        line = re.sub(r"✅", "✅  [6666]", line)
+#        matched = True
 
     #  قیمت کانفیگ جدید 🟢
     if "🟢" in line:
-        line = line.replace("🟢", "  [222222]  🟢")
+        line = line.replace("🟢", "  [7777]  🟢")
 
     #  خطوط نامفهوم
     if not matched:
@@ -108,7 +108,7 @@ def extract_dates(input_path, history_path, output_path):
             file.write(f"{last_date.strftime('%d %b %Y')}\n")
             file.write(f"{last_shamsi}\n")
             file.write("----------------------\n")
-            file.write(f"فاصله زمانی: {date_diff} روز\n")
+            file.write(f"فاصله زمانی: {date_diff} روز\n\n")
 
 def calculate_sum_from_output(output_path, MANDEH, RUZ):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -119,12 +119,14 @@ def calculate_sum_from_output(output_path, MANDEH, RUZ):
 
     with open(output_path, "a", encoding="utf-8") as file:
         file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-        file.write("\n")
+        file.write("📝\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write("-----------------------------\n")
-        file.write(f"مانده از قبل: `{MANDEH}`\n\n")
-        file.write(f"جمع مانده حساب تا تاریخ 1403/12/{RUZ}\n")
-        file.write(f"مبلغ:  `{int(MANDEH) + total_sum}` هزار تومان")
+        file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n")
+        file.write("-----------------------------\n")
+#        file.write("📝\n")
+        file.write(f"در تاریخ:  1403/12/{RUZ}\n")
+        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -154,15 +156,15 @@ def main():
                 review_lines.append(processed_line)
 
     with open(output_path, "w", encoding="utf-8") as file:
-        file.write(" خلاصه فاکتور شما:\n")
-        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
-        file.write("\n")
+        file.write(" 🧮  صورتحساب شما:\n")
+        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
+#        file.write("📝\n")
         file.writelines(processed_lines)
         file.write("\n")
         file.write("--------------\n")
-        file.write(f"تعداد تمدیدها ✅: {total_checkmarks} عدد\n")
-        file.write(f"تعداد خرید های جدید 🟢: {total_green_marks} عدد\n")
-        file.write(f"تعداد کل رکوردها: {total_checkmarks + total_green_marks} عدد\n")
+        file.write(f"تعداد تمدیدی ها ✅:  {total_checkmarks} عدد \n")
+        file.write(f"تعداد خرید های جدید 🟢:  {total_green_marks} عدد \n")
+        file.write(f"تعداد کل سفارشات:  {total_checkmarks + total_green_marks} عدد \n")
 
     with open(editme_path, "w", encoding="utf-8") as file:
         file.writelines(review_lines)
@@ -170,8 +172,8 @@ def main():
 
     extract_dates(input_path, history_path, output_path)
 
-    MANDEH = input("لطفا مانده حساب قبلی را وارد کنید: ")
-    RUZ = input("امروز چندمین روز از ماه جاری است؟ ")
+    MANDEH = input("Mandeh Ghabli:")
+    RUZ = input("َAdade Emruz:")
     calculate_sum_from_output(output_path, MANDEH, RUZ)
 
 if __name__ == "__main__":
