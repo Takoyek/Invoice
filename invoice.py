@@ -140,8 +140,6 @@ def main():
     for line in lines:
         total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
         total_green_marks += line.count("🟢")
-
-
         
         processed_line = process_text(line)
         if processed_line:
