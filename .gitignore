@@ -4,3 +4,12 @@ EditMe.txt
 History.txt
 Delete 01_.ini
 Delete 02_.ini
+
+
+
+
+
+# برای حذف فایل‌های مشخص شده از مخزن گیت‌هاب و نگه داشتن آن‌ها روی کامپیوتر شخصی‌تان، می‌توانید از دستور زیر استفاده کنید:
+
+# git rm --cached Input.txt Output.txt EditMe.txt History.txt "Delete 01_.ini" "Delete 02_.ini"
+# git rm --cached "Delete 01_.ini" "Delete 02_.ini"
