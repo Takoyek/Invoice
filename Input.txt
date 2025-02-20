@@ -522,9 +522,7 @@ Saeid Barati, [01-Feb-25 00:41]
 5859831191786085
 شکوفه رضایی بانک تجارت
 ............................................
-🔵 - حتما اسکرین شات فیش واریزی را ارسال نمایید.
-🟢 - مهلت تست 48 ساعت میباشد.
-🟡 - اگر پس از 48 ساعت، واریز وجه انجام نشود، سفارش شما به حالت انصراف از خرید در نظر گرفته خواهد کرد و اشتراک شما قطع میگردد.
+خواهد کرد و اشتراک شما قطع میگردد.
 
 Saeid Barati, [01-Feb-25 00:41]
 ⭐️ سفارش شما در اسرع وقت انجام شده و به شما اطلاع داده خواهد شد.
@@ -601,8 +599,6 @@ Maziyar, [02-Feb-25 10:44]
 Saeid Barati, [02-Feb-25 10:55]
 .
 
-Saeid Barati, [02-Feb-25 10:55]
-🟢MZ--علیرضا.T
 
 Saeid Barati, [02-Feb-25 10:55]
 vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICLwn5+iTVotLdi52YTbjNix2LbYpy5UIiwKICAiYWRkIjogImYxLmlyYW5pa2Euc2hvcCIsCiAgInBvcnQiOiA1MTM4NSwKICAiaWQiOiAiYjY3YmUzOGItODlkNi00ZGNhLWJhYzUtMTYxYzY4NGM5YTM4IiwKICAic2N5IjogImF1dG8iLAogICJuZXQiOiAidGNwIiwKICAidHlwZSI6ICJodHRwIiwKICAidGxzIjogIm5vbmUiLAogICJwYXRoIjogIi8iLAogICJob3N0IjogInBvbmlzaGEuaXIiCn0=
@@ -1363,8 +1359,6 @@ Saeid Barati, [13-Feb-25 11:56]
 Saeid Barati, [13-Feb-25 11:57]
 ⚠️  تست
 
-Saeid Barati, [13-Feb-25 11:57]
-🟢MZ--حمیدی
 
 Saeid Barati, [13-Feb-25 11:57]
 vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICLwn5+iTVotLdit2YXbjNiv24wiLAogICJhZGQiOiAiZjEuaXJhbmlrYS5zaG9wIiwKICAicG9ydCI6IDUxMzg1LAogICJpZCI6ICIzOTI1MmY2NS02NTg5LTRhOWItODJhYi03Mjg4ZWRhY2EwYTEiLAogICJzY3kiOiAiYXV0byIsCiAgIm5ldCI6ICJ0Y3AiLAogICJ0eXBlIjogImh0dHAiLAogICJ0bHMiOiAibm9uZSIsCiAgInBhdGgiOiAiLyIsCiAgImhvc3QiOiAicG9uaXNoYS5pciIKfQ==
