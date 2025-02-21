@@ -10,9 +10,32 @@ def process_text(line):
 
     GIG = "(گیگ|گیک|کیگ|گبگ|کیک)"
     SAD = r"صد[ .]?و?[ .]?"
+    SHST = "(شصت|شصد)"
+    SHST_R = "(شصت روز|شصد روز)"
+    NVD_R = "نود روز"
+    BIST = "بیست"
 
     mappings = [
         (rf"{SAD}پنجاه {GIG}", "✅  [195]"), # 150G
+        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "✅  [180]"), # 120G  120R
+        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "✅  [165]"), # 120G  90R
+        (rf"{SAD}{BIST} {GIG}", "✅  [156]"), # 120G   30R 60R
+        (rf"\bصد {GIG}\b.*?{NVD_R}", "✅  [150]"), # 100G  90R
+        (rf"\bصد {GIG}\b", "✅  [130]"), # 100G  30R 60R
+        (rf"نود {GIG}.*?{NVD_R}", "✅  [135]"), # 90G  90R
+        (rf"نود {GIG}.*?({SHST_R})", "✅  [125]"), # 90G  60R
+        (rf"نود {GIG}", "✅  [117]"), # 90G
+        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "✅  [110]"), # 80G  60R
+        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "✅  [104]"), # 80G
+        (rf"هفتاد {GIG}", "✅  [91]"), # 70G
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "✅  [105]"), # 60G  90R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "✅  [90]"), # 60G  60R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "✅  [78]"), # 60G
+        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "✅  [65]"), # 50G
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "✅  [70]"), # 40G  60R
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "✅  [55]"), # 40G
+        (rf"سی {GIG}", "✅  [45]"), # 30G
+        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "✅  [35]"), # 20G
         (rf"ده {GIG}", "✅  [25]") # 10G
         ]
 
@@ -23,6 +46,22 @@ def process_text(line):
             line = re.sub(r"✅", replacement, line)
             matched = True
             break 
+
+    #  قیمت دلخواه برای تمدید شد ✅
+#    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+#        line = re.sub(r"✅", "✅  [6666]", line)
+#        matched = True
+
+    #  قیمت کانفیگ جدید 🟢
+    if "🟢" in line:
+        line = line.replace("🟢", " [000000]  🟢")
+
+    #  000000 خطوط نامفهوم
+    if not matched:
+        line = re.sub(r"✅", "✅  [000000]", line)
+
+    return line + "\n" 
+
 
 def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
@@ -72,7 +111,7 @@ def extract_dates(input_path, history_path, output_path):
             file.write(f"{last_date.strftime('%d %b %Y')}\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
 
-def calculate_sum_from_output(output_path, MANDEH, RUZ):
+def calculate_sum_from_output(output_path, MANDEH, current_date_str):
     with open(output_path, "r", encoding="utf-8") as file:
         content = file.read()
 
@@ -84,8 +123,8 @@ def calculate_sum_from_output(output_path, MANDEH, RUZ):
         file.write("📝\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n\n")
-        file.write(f"در تاریخ:  1403/12/{RUZ}\n")
-        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
+        file.write(f"در تاریخ:  {current_date_str}\n")
+        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
         file.write("\n.")
 
 def main():
@@ -103,7 +142,7 @@ def main():
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
-    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
+    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
 
     for line in lines:
         total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
@@ -131,9 +170,12 @@ def main():
 
     extract_dates(input_path, history_path, output_path)
 
+    # محاسبه تاریخ شمسی فعلی
+    shamsi_today = JalaliDate.today()
+    current_date_str = f"{shamsi_today.year}/{shamsi_today.month}/{shamsi_today.day}"
+
     MANDEH = input("Mandeh Ghabli: ")
-    RUZ = input("َAdade Emruz (01-31) : ")
-    calculate_sum_from_output(output_path, MANDEH, RUZ)
+    calculate_sum_from_output(output_path, MANDEH, current_date_str)
 
 if __name__ == "__main__":
     main()

@@ -111,7 +111,7 @@ def extract_dates(input_path, history_path, output_path):
             file.write(f"{last_date.strftime('%d %b %Y')}\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
 
-def calculate_sum_from_output(output_path, MANDEH, RUZ):
+def calculate_sum_from_output(output_path, MANDEH, current_date_str):
     with open(output_path, "r", encoding="utf-8") as file:
         content = file.read()
 
@@ -123,8 +123,8 @@ def calculate_sum_from_output(output_path, MANDEH, RUZ):
         file.write("📝\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n\n")
-        file.write(f"در تاریخ:  1403/12/{RUZ}\n")
-        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
+        file.write(f"در تاریخ:  {current_date_str}\n")
+        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
         file.write("\n.")
 
 def main():
@@ -142,7 +142,7 @@ def main():
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
-    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
+    checkmark_phrases = ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅"]
 
     for line in lines:
         total_checkmarks += sum(line.count(phrase) for phrase in checkmark_phrases)
@@ -170,9 +170,12 @@ def main():
 
     extract_dates(input_path, history_path, output_path)
 
+    # محاسبه تاریخ شمسی فعلی
+    shamsi_today = JalaliDate.today()
+    current_date_str = f"{shamsi_today.year}/{shamsi_today.month}/{shamsi_today.day}"
+
     MANDEH = input("Mandeh Ghabli: ")
-    RUZ = input("َAdade Emruz (01-31) : ")
-    calculate_sum_from_output(output_path, MANDEH, RUZ)
+    calculate_sum_from_output(output_path, MANDEH, current_date_str)
 
 if __name__ == "__main__":
     main()
