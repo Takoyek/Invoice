@@ -170,8 +170,8 @@ def main():
 
     extract_dates(input_path, history_path, output_path)
 
-    MANDEH = input("Mandeh Ghabli:")
-    RUZ = input("َAdade Emruz:")
+    MANDEH = input("Mandeh Ghabli: ")
+    RUZ = input("َAdade Emruz (01-31) : ")
     calculate_sum_from_output(output_path, MANDEH, RUZ)
 
 if __name__ == "__main__":
