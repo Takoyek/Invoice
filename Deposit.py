@@ -37,7 +37,7 @@ total_balance = previous_balance - total_deposits
 output_lines = []
 
 output_lines.append('💳 واریز ها :\n')
-output_lines.append('____________________________________\n')
+output_lines.append('____________________________________\n\n')
 
 for line in deposit_lines:
     output_lines.append(line + '\n')
