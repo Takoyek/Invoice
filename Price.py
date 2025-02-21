@@ -49,14 +49,14 @@ def process_text(line):
 
     #  قیمت دلخواه برای تمدید شد ✅
     if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-        line = re.sub(r"✅", "✅  [75]", line)
+        line = re.sub(r"✅", "✅  [6666]", line)
         matched = True
 
     #  قیمت کانفیگ جدید 🟢
     if "🟢" in line:
         line = line.replace("🟢", " [000000]  🟢")
 
-    #  خطوط نامفهوم 000000
+    #  000000 خطوط نامفهوم
     if not matched:
         line = re.sub(r"✅", "✅  [000000]", line)
 
@@ -83,8 +83,13 @@ def extract_dates(input_path, history_path, output_path):
         shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
         miladi_dates.append(miladi_date)
         
-        converted_dates.append(f"--------------------------------\n{day} {month} {year_full}\n{day}-{month_num}-{year_full} {time}\n{shamsi_date}\n--------------------------------\n")
-    
+        converted_dates.append(
+        f"__________________\n"
+        f"{day} {month} {year_full}\n"
+        f"{day}-{month_num}-{year_full} {time}\n"
+        f"{shamsi_date}\n"
+        f"__________________\n")
+
     with open(history_path, "w", encoding="utf-8") as file:
         file.writelines(converted_dates)
     
@@ -96,19 +101,15 @@ def extract_dates(input_path, history_path, output_path):
         last_shamsi = JalaliDate(last_date).strftime("%Y/%m/%d")
         
         with open(output_path, "a", encoding="utf-8") as file:
-            file.write("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            file.write("____________________________________\n")
             file.write("📅\n")
             file.write("این گزارش از تاریخ:\n")
-            file.write("----------------------\n")
-            file.write(f"{first_date.strftime('%d %b %Y')}\n")
             file.write(f"{first_shamsi}\n")
-            file.write("----------------------\n")
+            file.write(f"{first_date.strftime('%d %b %Y')}\n")
             file.write("تا تاریخ:\n")
-            file.write("----------------------\n")
-            file.write(f"{last_date.strftime('%d %b %Y')}\n")
             file.write(f"{last_shamsi}\n")
-            file.write("----------------------\n")
-            file.write(f"فاصله زمانی: {date_diff} روز\n\n")
+            file.write(f"{last_date.strftime('%d %b %Y')}\n")
+            file.write(f"فاصله زمانی: {date_diff} روز\n")
 
 def calculate_sum_from_output(output_path, MANDEH, RUZ):
     with open(output_path, "r", encoding="utf-8") as file:
@@ -118,14 +119,13 @@ def calculate_sum_from_output(output_path, MANDEH, RUZ):
     total_sum = sum(numbers)
 
     with open(output_path, "a", encoding="utf-8") as file:
-        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+        file.write("____________________________________\n")
         file.write("📝\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
-        file.write("-----------------------------\n")
-        file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n")
-        file.write("-----------------------------\n")
+        file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n\n")
         file.write(f"در تاریخ:  1403/12/{RUZ}\n")
         file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
+        file.write("\n.")
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
@@ -156,12 +156,12 @@ def main():
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(" 🧮  صورتحساب شما:\n")
-        file.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
+        file.write("____________________________________\n\n")
         file.writelines(processed_lines)
-        file.write("\n")
-        file.write("--------------\n")
-        file.write(f"تعداد تمدیدی ها ✅:  {total_checkmarks} عدد \n")
-        file.write(f"تعداد خرید های جدید 🟢:  {total_green_marks} عدد \n")
+        file.write("____________________________________\n")
+        file.write("📊\n")
+        file.write(f"✅ تعداد تمدیدی ها:  {total_checkmarks} عدد \n")
+        file.write(f"🟢 تعداد خرید های جدید:  {total_green_marks} عدد \n")
         file.write(f"تعداد کل سفارشات:  {total_checkmarks + total_green_marks} عدد \n")
 
     with open(editme_path, "w", encoding="utf-8") as file:
