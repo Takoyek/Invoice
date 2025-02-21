@@ -8,22 +8,18 @@ output_file = r'D:\AVIDA\CODE\Invoice\Dep_out.txt'
 with open(input_file, 'r', encoding='utf-8') as file:
     lines = file.readlines()
 
-# استخراج مبالغ واریزها
+# استخراج مبالغ واریزها و تاریخ‌ها
 deposit_amounts = []
-pattern = r'(\d+)\s+هزار تومان'
-deposit_section = False
+deposit_lines = []
+pattern = r'(\d+)\s+هزار تومان\s+-\s+در تاریخ\s+([\d\-]+)'
 
 for line in lines:
-    if '💳 واریز ها :' in line:
-        deposit_section = True
-        continue  # شروع بخش واریزها
-    elif '____________________________________' in line:
-        deposit_section = False  # پایان بخش واریزها
-    if deposit_section:
-        match = re.search(pattern, line)
-        if match:
-            amount = int(match.group(1))
-            deposit_amounts.append(amount)
+    match = re.search(pattern, line)
+    if match:
+        amount = int(match.group(1))
+        date = match.group(2)
+        deposit_amounts.append(amount)
+        deposit_lines.append(line.strip())
 
 # محاسبه جمع واریزها
 total_deposits = sum(deposit_amounts)
@@ -32,22 +28,28 @@ total_deposits = sum(deposit_amounts)
 previous_balance = int(input('Mande Ghabli: '))
 
 # دریافت شماره روز ماه از کاربر
-day_of_month = input('Adade Ruz (00-31) : ')
+day_of_month = input('Adade Ruz (01-31) : ')
 
 # محاسبه جمع کل مانده حساب
 total_balance = previous_balance - total_deposits
 
-# به‌روزرسانی خطوط فایل با مقادیر جدید
-for i, line in enumerate(lines):
-    if 'جمع واریز ها:' in line:
-        lines[i] = f'جمع واریز ها:  {total_deposits}\n'
-    elif 'مبلغ مانده از قبل:' in line:
-        lines[i] = f'مبلغ مانده از قبل:  {previous_balance}\n'
-    elif 'در تاریخ:' in line:
-        lines[i] = f'در تاریخ:  1403/12/{day_of_month}\n'
-    elif 'جمع کل مانده حساب شما:' in line:
-        lines[i] = f'جمع کل مانده حساب شما:  {total_balance} هزار تومان\n'
+# ساختن محتوای خروجی
+output_lines = []
+
+output_lines.append('💳 واریز ها :\n')
+output_lines.append('\n')
+
+for line in deposit_lines:
+    output_lines.append(line + '\n')
+
+output_lines.append('____________________________________\n')
+output_lines.append(f'جمع واریز ها:  {total_deposits}\n')
+output_lines.append(f'مبلغ مانده از قبل:  {previous_balance}\n')
+output_lines.append('\n')
+output_lines.append(f'در تاریخ:  1403/12/{day_of_month}\n')
+output_lines.append(f'جمع کل مانده حساب شما:  {total_balance} هزار تومان\n')
+output_lines.append('.\n')
 
 # نوشتن محتوای جدید در فایل خروجی
 with open(output_file, 'w', encoding='utf-8') as file:
-    file.writelines(lines)
+    file.writelines(output_lines)
