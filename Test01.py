@@ -10,32 +10,9 @@ def process_text(line):
 
     GIG = "(گیگ|گیک|کیگ|گبگ|کیک)"
     SAD = r"صد[ .]?و?[ .]?"
-    SHST = "(شصت|شصد)"
-    SHST_R = "(شصت روز|شصد روز)"
-    NVD_R = "نود روز"
-    BIST = "بیست"
 
     mappings = [
         (rf"{SAD}پنجاه {GIG}", "✅  [195]"), # 150G
-        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "✅  [180]"), # 120G  120R
-        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "✅  [165]"), # 120G  90R
-        (rf"{SAD}{BIST} {GIG}", "✅  [156]"), # 120G   30R 60R
-        (rf"\bصد {GIG}\b.*?{NVD_R}", "✅  [150]"), # 100G  90R
-        (rf"\bصد {GIG}\b", "✅  [130]"), # 100G  30R 60R
-        (rf"نود {GIG}.*?{NVD_R}", "✅  [135]"), # 90G  90R
-        (rf"نود {GIG}.*?({SHST_R})", "✅  [125]"), # 90G  60R
-        (rf"نود {GIG}", "✅  [117]"), # 90G
-        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "✅  [110]"), # 80G  60R
-        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "✅  [104]"), # 80G
-        (rf"هفتاد {GIG}", "✅  [91]"), # 70G
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "✅  [105]"), # 60G  90R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "✅  [90]"), # 60G  60R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "✅  [78]"), # 60G
-        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "✅  [65]"), # 50G
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "✅  [70]"), # 40G  60R
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "✅  [55]"), # 40G
-        (rf"سی {GIG}", "✅  [45]"), # 30G
-        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "✅  [35]"), # 20G
         (rf"ده {GIG}", "✅  [25]") # 10G
         ]
 
@@ -46,22 +23,6 @@ def process_text(line):
             line = re.sub(r"✅", replacement, line)
             matched = True
             break 
-
-    #  قیمت دلخواه برای تمدید شد ✅
-#    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
-#        line = re.sub(r"✅", "✅  [6666]", line)
-#        matched = True
-
-    #  قیمت کانفیگ جدید 🟢
-    if "🟢" in line:
-        line = line.replace("🟢", " [000000]  🟢")
-
-    #  000000 خطوط نامفهوم
-    if not matched:
-        line = re.sub(r"✅", "✅  [000000]", line)
-
-    return line + "\n" 
-
 
 def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
