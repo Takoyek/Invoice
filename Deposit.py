@@ -25,10 +25,10 @@ for line in lines:
 total_deposits = sum(deposit_amounts)
 
 # دریافت مبلغ مانده از قبل از کاربر
-previous_balance = int(input('Mande Ghabli: '))
+previous_balance = int(input('Mandeh Ghabli: '))
 
 # دریافت شماره روز ماه از کاربر
-day_of_month = input('Adade Ruz (01-31) : ')
+day_of_month = input('Adade Emruz (01-31) : ')
 
 # محاسبه جمع کل مانده حساب
 total_balance = previous_balance - total_deposits
@@ -37,17 +37,16 @@ total_balance = previous_balance - total_deposits
 output_lines = []
 
 output_lines.append('💳 واریز ها :\n')
-output_lines.append('\n')
+output_lines.append('____________________________________\n')
 
 for line in deposit_lines:
     output_lines.append(line + '\n')
 
 output_lines.append('____________________________________\n')
-output_lines.append(f'جمع واریز ها:  {total_deposits}\n')
-output_lines.append(f'مبلغ مانده از قبل:  {previous_balance}\n')
-output_lines.append('\n')
+output_lines.append(f'جمع واریز ها:  `{total_deposits}`\n')
+output_lines.append(f'مبلغ مانده از قبل:  `{previous_balance}`\n\n')
 output_lines.append(f'در تاریخ:  1403/12/{day_of_month}\n')
-output_lines.append(f'جمع کل مانده حساب شما:  {total_balance} هزار تومان\n')
+output_lines.append(f'جمع کل مانده حساب شما:  `{total_balance}` هزار تومان\n')
 output_lines.append('.\n')
 
 # نوشتن محتوای جدید در فایل خروجی
