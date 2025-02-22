@@ -1,56 +1,0 @@
-فایل config.ini:
-ini
-Copy
-[PATHS]
-input = input.txt
-output = output.txt
-editme = editme.txt
-history = history.txt
-excel = invoice.xlsx
-pdf = invoice.pdf
-db = history.db
-
-[SETTINGS]
-default_discount = 0.0
-default_tax = 0.09
-دستورات اجرا:
-نصب نیازمندی‌ها:
-
-bash
-Copy
-pip install pandas openpyxl reportlab persiantools
-اجرای تست‌ها:
-
-bash
-Copy
-python invoice.py --test
-اجرای اصلی:
-
-bash
-Copy
-python invoice.py --mandeh 500000 --discount 0.1 --tax 0.09
-ویژگی‌های اضافه شده:
-سیستم لاگینگ پیشرفته
-
-مدیریت خطاهای جامع
-
-پیکربندی خارجی با فایل config.ini
-
-پشتیبانی از دیتابیس SQLite
-
-واسط خط فرمان (CLI) با argparse
-
-تست‌های واحد
-
-Type hints و docstrings
-
-محاسبات مالی پیشرفته با تخفیف و مالیات
-
-امنیت مسیرها
-
-پشتیبانی از فونت فارسی در PDF
-
-ساختار ماژولار و شیءگرا
-
-این کد تمام پیشنهادات اولیه را پیاده‌سازی کرده و آماده استفاده است! 😊
-
