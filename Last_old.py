@@ -3,9 +3,8 @@ from datetime import datetime
 from persiantools.jdatetime import JalaliDate
 
 def process_text(line):
-    # بررسی اگر خط شامل "تمدید شد ✅"، "تمدید شد✅"، "تمدید شد  ✅" یا "🟢" باشد
     if not any(keyword in line for keyword in ["تمدید شد ✅", "تمدید شد✅", "تمدید شد  ✅", "🟢"]):
-        return None
+        return None 
 
     line = re.sub(r"\s+", " ", line).strip()
 
@@ -17,58 +16,51 @@ def process_text(line):
     BIST = "بیست"
 
     mappings = [
-        (rf"{SAD}پنجاه {GIG}", "[195]"),  # 150G
-        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "[180]"),  # 120G 120R
-        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[165]"),  # 120G 90R
-        (rf"{SAD}{BIST} {GIG}", "[156]"),  # 120G 30R 60R
-        (rf"\bصد {GIG}\b.*?{NVD_R}", "[150]"),  # 100G 90R
-        (rf"\bصد {GIG}\b", "[130]"),  # 100G 30R 60R
-        (rf"نود {GIG}.*?{NVD_R}", "[135]"),  # 90G 90R
-        (rf"نود {GIG}.*?({SHST_R})", "[125]"),  # 90G 60R
-        (rf"نود {GIG}", "[117]"),  # 90G
-        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "[110]"),  # 80G 60R
-        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "[104]"),  # 80G
-        (rf"هفتاد {GIG}", "[91]"),  # 70G
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "[105]"),  # 60G 90R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "[90]"),  # 60G 60R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "[78]"),  # 60G
-        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "[65]"),  # 50G
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "[70]"),  # 40G 60R
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "[55]"),  # 40G
-        (rf"سی {GIG}", "[45]"),  # 30G
-        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "[35]"),  # 20G
-        (rf"ده {GIG}", "[25]")  # 10G
-    ]
+        (rf"{SAD}پنجاه {GIG}", "✅  [195]"), # 150G
+        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "✅  [180]"), # 120G  120R
+        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "✅  [165]"), # 120G  90R
+        (rf"{SAD}{BIST} {GIG}", "✅  [156]"), # 120G   30R 60R
+        (rf"\bصد {GIG}\b.*?{NVD_R}", "✅  [150]"), # 100G  90R
+        (rf"\bصد {GIG}\b", "✅  [130]"), # 100G  30R 60R
+        (rf"نود {GIG}.*?{NVD_R}", "✅  [135]"), # 90G  90R
+        (rf"نود {GIG}.*?({SHST_R})", "✅  [125]"), # 90G  60R
+        (rf"نود {GIG}", "✅  [117]"), # 90G
+        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "✅  [110]"), # 80G  60R
+        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "✅  [104]"), # 80G
+        (rf"هفتاد {GIG}", "✅  [91]"), # 70G
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "✅  [105]"), # 60G  90R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "✅  [90]"), # 60G  60R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "✅  [78]"), # 60G
+        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "✅  [65]"), # 50G
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "✅  [70]"), # 40G  60R
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "✅  [55]"), # 40G
+        (rf"سی {GIG}", "✅  [45]"), # 30G
+        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "✅  [35]"), # 20G
+        (rf"ده {GIG}", "✅  [25]") # 10G
+        ]
 
-    matched = False
+    matched = False 
 
     for pattern, replacement in mappings:
         if re.search(pattern, line):
-            if "✅" in line:
-                # جایگزینی "✅" با مقدار جایگزین
-                line = line.replace("✅", f"✅  {replacement}")
-            elif "🟢" in line:
-                # افزودن مقدار جایگزین قبل از "🟢"
-                line = line.replace("🟢", f"{replacement}  🟢")
+            line = re.sub(r"✅", replacement, line)
             matched = True
-            break
+            break 
 
-    # در صورتی که تطابقی پیدا نشد ولی خط شامل "✅" یا "🟢" بود
-    if not matched and ("✅" in line or "🟢" in line):
-        if "✅" in line:
-            line = line.replace("✅", "✅  [6666]")
-        elif "🟢" in line:
-            line = line.replace("🟢", "[000000]  🟢")
-        matched = True
+    #  قیمت دلخواه برای تمدید شد ✅
+#    if not matched and re.fullmatch(r"[\S ]+ تمدید شد ?✅", line):
+#        line = re.sub(r"✅", "✅  [6666]", line)
+#        matched = True
 
-    # اگر هنوز تطابقی پیدا نشده بود
+    #  قیمت کانفیگ جدید 🟢
+    if "🟢" in line:
+        line = line.replace("🟢", " [000000]  🟢")
+
+    #  000000 خطوط نامفهوم
     if not matched:
-        if "✅" in line:
-            line = line.replace("✅", "✅  [000000]")
-        elif "🟢" in line:
-            line = line.replace("🟢", "[000000]  🟢")
+        line = re.sub(r"✅", "✅  [000000]", line)
 
-    return line + "\n"
+    return line + "\n" 
 
 
 def extract_dates(input_path, history_path, output_path):
