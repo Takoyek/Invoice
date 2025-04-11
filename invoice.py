@@ -56,17 +56,17 @@ def process_text(line):
     # در صورتی که تطابقی پیدا نشد ولی خط شامل "✅" یا "🟢" بود
     if not matched and ("✅" in line or "🟢" in line):
         if "✅" in line:
-            line = line.replace("✅", "✅  [6666]")
+            line = line.replace("✅", "✅  [000000]")
         elif "🟢" in line:
-            line = line.replace("🟢", "[000000]  🟢")
+            line = line.replace("🟢", "[111111]  🟢")
         matched = True
 
     # اگر هنوز تطابقی پیدا نشده بود
     if not matched:
         if "✅" in line:
-            line = line.replace("✅", "✅  [000000]")
+            line = line.replace("✅", "✅  [222222]")
         elif "🟢" in line:
-            line = line.replace("🟢", "[000000]  🟢")
+            line = line.replace("🟢", "[333333]  🟢")
 
     return line + "\n"
 
