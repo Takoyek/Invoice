@@ -17,27 +17,27 @@ def process_text(line):
     BIST = "بیست"
 
     mappings = [
-        (rf"{SAD}پنجاه {GIG}", "[195]"),  # 150G
-        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "[180]"),  # 120G 120R
-        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[165]"),  # 120G 90R
-        (rf"{SAD}{BIST} {GIG}", "[156]"),  # 120G 30R 60R
-        (rf"\bصد {GIG}\b.*?{NVD_R}", "[150]"),  # 100G 90R
-        (rf"\bصد {GIG}\b", "[130]"),  # 100G 30R 60R
-        (rf"نود {GIG}.*?{NVD_R}", "[135]"),  # 90G 90R
-        (rf"نود {GIG}.*?({SHST_R})", "[125]"),  # 90G 60R
-        (rf"نود {GIG}", "[117]"),  # 90G
+        (rf"{SAD}پنجاه {GIG}", "[240]"),  # 150G
+        (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "[240]"),  # 120G 120R
+        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[220]"),  # 120G 90R
+        (rf"{SAD}{BIST} {GIG}", "[190]"),  # 120G 30R 60R
+        (rf"\bصد {GIG}\b.*?{NVD_R}", "[190]"),  # 100G 90R
+        (rf"\bصد {GIG}\b", "[160]"),  # 100G 30R 60R
+        (rf"نود {GIG}.*?{NVD_R}", "[180]"),  # 90G 90R
+        (rf"نود {GIG}.*?({SHST_R})", "[160]"),  # 90G 60R
+        (rf"نود {GIG}", "[145]"),  # 90G
         (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "[110]"),  # 80G 60R
-        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "[104]"),  # 80G
-        (rf"هفتاد {GIG}", "[91]"),  # 70G
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "[105]"),  # 60G 90R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "[90]"),  # 60G 60R
-        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "[78]"),  # 60G
-        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "[65]"),  # 50G
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "[70]"),  # 40G 60R
-        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "[55]"),  # 40G
-        (rf"سی {GIG}", "[45]"),  # 30G
-        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "[35]"),  # 20G
-        (rf"ده {GIG}", "[25]")  # 10G
+        (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "[130]"),  # 80G
+        (rf"هفتاد {GIG}", "[115]"),  # 70G
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?{NVD_R}", "[135]"),  # 60G 90R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG}).*?({SHST_R})", "[120]"),  # 60G 60R
+        (rf"{SHST} {GIG}(?!.*{SAD}{SHST} {GIG})", "[100]"),  # 60G
+        (rf"پنجاه {GIG}(?!.*{SAD}پنجاه {GIG})", "[85]"),  # 50G
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG}).*?({SHST_R})", "[90]"),  # 40G 60R
+        (rf"چهل {GIG}(?!.*{SAD}چهل {GIG})", "[75]"),  # 40G
+        (rf"سی {GIG}", "[60]"),  # 30G
+        (rf"{BIST} {GIG}(?!.*{SAD}{BIST} {GIG})", "[45]"),  # 20G
+        (rf"ده {GIG}", "[30]")  # 10G
     ]
 
     matched = False
