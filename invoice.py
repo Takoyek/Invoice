@@ -22,7 +22,8 @@ def process_text(line):
         (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[225]"),  # 120G 90R
         (rf"{SAD}{BIST} {GIG}", "[190]"),  # 120G 30R 60R
         (rf"\bصد {GIG}\b.*?{NVD_R}", "[200]"),  # 100G 90R
-        (rf"\bصد {GIG}\b", "[160]"),  # 100G 30R 60R************
+        (rf"\bصد {GIG}\b.*?{SHST_R}", "[177]"),  # 100G 60R        
+        (rf"\bصد {GIG}\b", "[160]"),  # 100G 30R 60R
         (rf"نود {GIG}.*?{NVD_R}", "[180]"),  # 90G 90R
         (rf"نود {GIG}.*?({SHST_R})", "[165]"),  # 90G 60R
         (rf"نود {GIG}", "[145]"),  # 90G
@@ -58,7 +59,7 @@ def process_text(line):
         if "✅" in line:
             line = line.replace("✅", "✅  [000000]")
         elif "🟢" in line:
-            line = line.replace("🟢", "[111111]  🟢")
+            line = line.replace("🟢", "[1111111]  🟢")
         matched = True
 
     # اگر هنوز تطابقی پیدا نشده بود
