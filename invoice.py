@@ -19,12 +19,12 @@ def process_text(line):
     mappings = [
         (rf"{SAD}پنجاه {GIG}", "[240]"),  # 150G
         (rf"{SAD}{BIST} {GIG}.*?({SAD}{BIST} روز)", "[240]"),  # 120G 120R
-        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[220]"),  # 120G 90R
+        (rf"{SAD}{BIST} {GIG}.*?{NVD_R}", "[225]"),  # 120G 90R
         (rf"{SAD}{BIST} {GIG}", "[190]"),  # 120G 30R 60R
-        (rf"\bصد {GIG}\b.*?{NVD_R}", "[190]"),  # 100G 90R
-        (rf"\bصد {GIG}\b", "[160]"),  # 100G 30R 60R
+        (rf"\bصد {GIG}\b.*?{NVD_R}", "[200]"),  # 100G 90R
+        (rf"\bصد {GIG}\b", "[160]"),  # 100G 30R 60R************
         (rf"نود {GIG}.*?{NVD_R}", "[180]"),  # 90G 90R
-        (rf"نود {GIG}.*?({SHST_R})", "[160]"),  # 90G 60R
+        (rf"نود {GIG}.*?({SHST_R})", "[165]"),  # 90G 60R
         (rf"نود {GIG}", "[145]"),  # 90G
         (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG}).*?({SHST_R})", "[150]"),  # 80G 60R
         (rf"هشتاد {GIG}(?!.*{SAD}هشتاد {GIG})", "[130]"),  # 80G
@@ -119,21 +119,27 @@ def extract_dates(input_path, history_path, output_path):
             file.write(f"{last_date.strftime('%d %b %Y')}\n")
             file.write(f"فاصله زمانی: {date_diff} روز\n")
 
+
 def calculate_sum_from_output(output_path, MANDEH, current_date_str):
     with open(output_path, "r", encoding="utf-8") as file:
         content = file.read()
 
+    # استخراج اعداد داخل براکت‌ها و محاسبه مجموع
     numbers = [int(num) for num in re.findall(r"\[(\d+)\]", content)]
     total_sum = sum(numbers)
 
+    # نوشتن اطلاعات در فایل
     with open(output_path, "a", encoding="utf-8") as file:
-        file.write("____________________________________\n")
+        file.write("\n" + "_" * 36 + "\n")
         file.write("📝\n")
         file.write(f"مبلغ این فاکتور: `{total_sum}`\n")
         file.write(f"مبلغ مانده از قبل: `{MANDEH}`\n\n")
-        file.write(f"در تاریخ:  {current_date_str}\n")
-        file.write(f"جمع کل مانده حساب شما:  `{int(MANDEH) + total_sum}` هزار تومان")
-        file.write("\n.")
+        file.write(f"در تاریخ: {current_date_str}\n")
+        file.write(f"جمع کل مانده حساب شما: `{int(MANDEH) + total_sum}` هزار تومان\n")
+        file.write("\n⚠️ توجه:\n")
+        file.write("این فاکتور به‌صورت خودکار در بازه‌های زمانی مشخص صادر می‌شود و به معنی الزام به پرداخت نیست.\n")
+        file.write("شما می‌توانید پس از رسیدن مبلغ واریزی به حد نصاب مورد نظر خود، نسبت به پرداخت آن اقدام فرمایید.\n")
+
 
 def main():
     input_path = "D:\\AVIDA\\CODE\\Invoice\\Input.txt"
