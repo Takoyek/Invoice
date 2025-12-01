@@ -63,7 +63,7 @@ def process_text(line):
         if "✅" in line:
             line = line.replace("✅", "✅  [000000]")
         elif "🟢" in line:
-            line = line.replace("🟢", "[1111111]  🟢")
+            line = line.replace("🟢", "[60]  🟢")
         matched = True
 
     # اگر هنوز تطابقی پیدا نشده بود
@@ -80,26 +80,30 @@ def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
     
-    dates = re.findall(r"\[(\d{2})-([A-Za-z]{3})-(\d{2}) (\d{2}:\d{2})\]", "".join(lines))
-    
-    month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06",
-                 "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
+    # تغییر 1: الگوی Regex برای فرمت [YYYY-MM-DD HH:MM] آپدیت شد
+    # (\d{4}) برای سال، (\d{2}) برای ماه و روز
+    dates = re.findall(r"\[(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})\]", "".join(lines))
     
     converted_dates = []
     miladi_dates = []
-    for day, month, year, time in dates:
-        year_full = int("20" + year)
-        month_num = month_map[month]
-        day = int(day)
+    
+    # تغییر 2: ترتیب متغیرها در فرمت جدید (سال، ماه، روز، زمان) است
+    for year, month, day, time in dates:
+        year_full = int(year)       # سال دیگر نیازی به اضافه کردن "20" ندارد
+        month_num = int(month)      # ماه هم‌اکنون عدد است
+        day_num = int(day)
         
-        miladi_date = datetime(year_full, int(month_num), day)
+        miladi_date = datetime(year_full, month_num, day_num)
         shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
         miladi_dates.append(miladi_date)
         
+        # برای نمایش نام ماه (مثل Oct) در خروجی متنی، آن را از تاریخ تولید می‌کنیم
+        month_name = miladi_date.strftime("%b") 
+
         converted_dates.append(
         f"__________________\n"
-        f"{day} {month} {year_full}\n"
-        f"{day}-{month_num}-{year_full} {time}\n"
+        f"{day_num} {month_name} {year_full}\n"      # نمایش به صورت: 31 Oct 2025
+        f"{day}-{month}-{year} {time}\n"             # نمایش فرمت عددی
         f"{shamsi_date}\n"
         f"__________________\n")
 
