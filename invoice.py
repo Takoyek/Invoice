@@ -63,7 +63,7 @@ def process_text(line):
         if "✅" in line:
             line = line.replace("✅", "✅  [000000]")
         elif "🟢" in line:
-            line = line.replace("🟢", "[60]  🟢")
+            line = line.replace("🟢", "[1111111]  🟢")
         matched = True
 
     # اگر هنوز تطابقی پیدا نشده بود
