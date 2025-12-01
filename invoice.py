@@ -78,35 +78,61 @@ def process_text(line):
 
 def extract_dates(input_path, history_path, output_path):
     with open(input_path, "r", encoding="utf-8") as file:
-        lines = file.readlines()
+        text = file.read()
     
-    # تغییر 1: الگوی Regex برای فرمت [YYYY-MM-DD HH:MM] آپدیت شد
-    # (\d{4}) برای سال، (\d{2}) برای ماه و روز
-    dates = re.findall(r"\[(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})\]", "".join(lines))
+    # الگو برای فرمت قدیمی: [05-May-25 18:05]
+    pattern_old = r"\[(\d{2})-([A-Za-z]{3})-(\d{2}) (\d{2}:\d{2})\]"
+    # الگو برای فرمت جدید: [2025-10-31 12:31]
+    pattern_new = r"\[(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})\]"
+    
+    dates_old = re.findall(pattern_old, text)
+    dates_new = re.findall(pattern_new, text)
+    
+    month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06",
+                 "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
     
     converted_dates = []
     miladi_dates = []
     
-    # تغییر 2: ترتیب متغیرها در فرمت جدید (سال، ماه، روز، زمان) است
-    for year, month, day, time in dates:
-        year_full = int(year)       # سال دیگر نیازی به اضافه کردن "20" ندارد
-        month_num = int(month)      # ماه هم‌اکنون عدد است
-        day_num = int(day)
+    # پردازش فرمت قدیمی
+    for day, month, year, time in dates_old:
+        year_full = int("20" + year)
+        month_num = month_map[month]
+        day_int = int(day)
         
-        miladi_date = datetime(year_full, month_num, day_num)
+        miladi_date = datetime(year_full, int(month_num), day_int)
         shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
         miladi_dates.append(miladi_date)
         
-        # برای نمایش نام ماه (مثل Oct) در خروجی متنی، آن را از تاریخ تولید می‌کنیم
-        month_name = miladi_date.strftime("%b") 
-
         converted_dates.append(
-        f"__________________\n"
-        f"{day_num} {month_name} {year_full}\n"      # نمایش به صورت: 31 Oct 2025
-        f"{day}-{month}-{year} {time}\n"             # نمایش فرمت عددی
-        f"{shamsi_date}\n"
-        f"__________________\n")
-
+            f"__________________\n"
+            f"{day} {month} {year_full}\n"
+            f"{day}-{month_num}-{year_full} {time}\n"
+            f"{shamsi_date}\n"
+            f"__________________\n"
+        )
+    
+    # پردازش فرمت جدید
+    for year, month, day, time in dates_new:
+        year_full = int(year)
+        month_num = month  # در فرمت جدید ماه عددی است
+        day_int = int(day)
+        
+        miladi_date = datetime(year_full, int(month_num), day_int)
+        shamsi_date = JalaliDate(miladi_date).strftime("%Y/%m/%d")
+        miladi_dates.append(miladi_date)
+        
+        converted_dates.append(
+            f"__________________\n"
+            f"{day} {month} {year_full}\n"
+            f"{day}-{month}-{year_full} {time}\n"
+            f"{shamsi_date}\n"
+            f"__________________\n"
+        )
+    
+    # مرتب‌سازی تاریخ‌ها بر اساس تاریخ میلادی
+    miladi_dates.sort()
+    
     with open(history_path, "w", encoding="utf-8") as file:
         file.writelines(converted_dates)
     
